@@ -4,50 +4,15 @@
   <meta charset="UTF-8">
   <title>SuS XP Leaderboard</title>
   <style>
-    body {
-      background-color: #111;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    h1 {
-      margin-top: 20px;
-    }
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 80%;
-    }
-    th, td {
-      border: 1px solid #444;
-      padding: 10px;
-    }
-    th {
-      background: #222;
-    }
-    tr:nth-child(even) {
-      background: #1a1a1a;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
+    body { background: #111; color: #fff; font-family: Arial, sans-serif; text-align: center; }
+    table { margin: 20px auto; border-collapse: collapse; width: 80%; background: #222; }
+    th, td { border: 1px solid #444; padding: 10px; }
+    th { background: #333; }
   </style>
 </head>
 <body>
   <h1>SuS XP Leaderboard</h1>
-  <p>Cập nhật tự động mỗi 30 phút hoặc bấm nút bên dưới</p>
-  <button onclick="loadData()">🔄 Cập nhật ngay</button>
-
-  <table id="leaderboard">
+  <table>
     <thead>
       <tr>
         <th>Rank</th>
@@ -57,63 +22,32 @@
         <th>Gained XP</th>
       </tr>
     </thead>
-    <tbody>
-      <tr><td colspan="5">Đang tải dữ liệu...</td></tr>
-    </tbody>
+    <tbody id="leaderboard"></tbody>
   </table>
 
   <script>
-    const players = [
-      { name: "SuS QuangTong", locked: 0 },
-      { name: "SuS Dominate", locked: 0 },
-      { name: "SuS TraDaVN", locked: 0 },
-      { name: "SuS Daera", locked: 0 }
-    ];
-
     async function loadData() {
-      const tbody = document.querySelector("#leaderboard tbody");
-      tbody.innerHTML = "<tr><td colspan='5'>⏳ Đang tải dữ liệu...</td></tr>";
+      const res = await fetch("/api/xp");
+      const data = await res.json();
 
-      try {
-        const res = await fetch("/api/xp");
-        const data = await res.json();
+      const tbody = document.getElementById("leaderboard");
+      tbody.innerHTML = "";
 
-        // Ghép dữ liệu locked XP và current XP
-        const merged = players.map(p => {
-          const apiPlayer = data.find(d => d.name === p.name) || {};
-          const current = apiPlayer.currentXP || 0;
-          const gained = current - p.locked;
-          return {
-            name: p.name,
-            locked: p.locked,
-            current,
-            gained
-          };
-        });
-
-        // Sắp xếp theo locked XP
-        merged.sort((a, b) => b.locked - a.locked);
-
-        tbody.innerHTML = merged.map((p, i) => `
+      data.forEach((player, i) => {
+        const row = `
           <tr>
             <td>${i + 1}</td>
-            <td>${p.name}</td>
-            <td>${p.locked.toLocaleString()}</td>
-            <td>${p.current.toLocaleString()}</td>
-            <td>${p.gained.toLocaleString()}</td>
+            <td>${player.name}</td>
+            <td>${player.lockedXP.toLocaleString()}</td>
+            <td>${player.currentXP.toLocaleString()}</td>
+            <td>${player.gainedXP.toLocaleString()}</td>
           </tr>
-        `).join("");
-
-      } catch (err) {
-        console.error(err);
-        tbody.innerHTML = "<tr><td colspan='5'>❌ Lỗi tải dữ liệu</td></tr>";
-      }
+        `;
+        tbody.innerHTML += row;
+      });
     }
 
-    // Gọi lần đầu khi mở web
     loadData();
-    // Tự động cập nhật mỗi 30 phút
-    setInterval(loadData, 30 * 60 * 1000);
   </script>
 </body>
 </html>
