@@ -1,14 +1,37 @@
-// API endpoint để proxy dữ liệu highscores từ curseofaros
 export default async function handler(req, res) {
-  try {
-    const response = await fetch("https://www.curseofaros.com/highscores.html");
-    const text = await response.text();
+  const players = [
+    { name: "SuS QuangTong", lockedXP: 1200000 },
+    { name: "SuS Dominate", lockedXP: 800000 },
+    { name: "SuS TraDaVN", lockedXP: 600000 },
+    { name: "SuS Daera", lockedXP: 400000 }
+  ];
 
-    res.setHeader("Access-Control-Allow-Origin", "*"); // Cho phép mọi nguồn gọi
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.status(200).send(text);
+  try {
+    // Gọi API chính thức của Curse of Aros
+    const responses = await Promise.all(
+      players.map(p =>
+        fetch(`https://api.curseofaros.com/players/${encodeURIComponent(p.name)}`)
+          .then(r => r.json())
+          .catch(() => null)
+      )
+    );
+
+    const data = players.map((p, i) => {
+      const currentXP = responses[i]?.xp ?? 0;
+      return {
+        name: p.name,
+        lockedXP: p.lockedXP,
+        currentXP,
+        gainedXP: currentXP - p.lockedXP
+      };
+    });
+
+    // Sắp xếp theo Locked XP
+    data.sort((a, b) => b.lockedXP - a.lockedXP);
+
+    res.status(200).json(data);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Không thể lấy dữ liệu" });
+    res.status(500).json({ error: "Không lấy được dữ liệu" });
   }
 }
