@@ -7,13 +7,17 @@ export default async function handler(req, res) {
   ];
 
   try {
-    // Gọi API chính thức của Curse of Aros
     const responses = await Promise.all(
-      players.map(p =>
-        fetch(`https://api.curseofaros.com/players/${encodeURIComponent(p.name)}`)
-          .then(r => r.json())
-          .catch(() => null)
-      )
+      players.map(async (p) => {
+        try {
+          const r = await fetch(`https://api.curseofaros.com/players/${encodeURIComponent(p.name)}`);
+          const data = await r.json();
+          return data;
+        } catch (e) {
+          console.error("Lỗi fetch:", p.name, e);
+          return null;
+        }
+      })
     );
 
     const data = players.map((p, i) => {
@@ -26,12 +30,9 @@ export default async function handler(req, res) {
       };
     });
 
-    // Sắp xếp theo Locked XP
-    data.sort((a, b) => b.lockedXP - a.lockedXP);
-
     res.status(200).json(data);
   } catch (err) {
-    console.error(err);
+    console.error("Lỗi API tổng:", err);
     res.status(500).json({ error: "Không lấy được dữ liệu" });
   }
 }
