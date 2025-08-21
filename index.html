@@ -2,10 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SuS XP API</title>
+  <title>SuS XP Leaderboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
+    table { margin: 20px auto; border-collapse: collapse; width: 80%; }
+    th, td { padding: 10px; border: 1px solid #444; }
+    th { background: #222; }
+    tr:nth-child(even) { background: #1a1a1a; }
+  </style>
 </head>
 <body>
-  <h1>SuS XP API đang hoạt động 🚀</h1>
-  <p>Xem dữ liệu tại <a href="/api/xp">/api/xp</a></p>
+  <h1>SuS XP Leaderboard</h1>
+  <p>(Tự động cập nhật mỗi 30 phút)</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Tên</th>
+        <th>Locked XP</th>
+        <th>Current XP</th>
+        <th>Gained XP</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard"></tbody>
+  </table>
+
+  <script>
+    async function fetchData() {
+      const res = await fetch('/api/xp');
+      const data = await res.json();
+
+      // Locked XP sẽ do bạn tự nhập ở đây
+      const lockedXP = {
+        "SuS QuangTong": 10000,
+        "SuS Dominate": 20000,
+        "SuS TraDaVN": 15000,
+        "SuS Daera": 12000
+      };
+
+      // Chuyển dữ liệu
+      let players = Object.keys(data).map(name => {
+        const current = data[name]?.xp || 0;
+        const locked = lockedXP[name] || 0;
+        return {
+          name,
+          locked,
+          current,
+          gained: current - locked
+        };
+      });
+
+      // Sắp xếp theo locked XP (hoặc gained XP tùy bạn)
+      players.sort((a, b) => b.locked - a.locked);
+
+      // Render
+      const tbody = document.getElementById('leaderboard');
+      tbody.innerHTML = "";
+      players.forEach((p, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${i+1}</td>
+            <td>${p.name}</td>
+            <td>${p.locked.toLocaleString()}</td>
+            <td>${p.current.toLocaleString()}</td>
+            <td>${p.gained.toLocaleString()}</td>
+          </tr>`;
+      });
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
