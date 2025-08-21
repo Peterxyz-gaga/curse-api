@@ -1,13 +1,36 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>SuS XP Leaderboard</title>
   <style>
-    body { background: #111; color: #fff; font-family: Arial, sans-serif; text-align: center; }
-    table { margin: 20px auto; border-collapse: collapse; width: 80%; background: #222; }
-    th, td { border: 1px solid #444; padding: 10px; }
-    th { background: #333; }
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      width: 80%;
+      background: #222;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      border: 1px solid #444;
+    }
+    th {
+      background: #333;
+    }
+    tr:nth-child(even) {
+      background: #1a1a1a;
+    }
   </style>
 </head>
 <body>
@@ -22,32 +45,39 @@
         <th>Gained XP</th>
       </tr>
     </thead>
-    <tbody id="leaderboard"></tbody>
+    <tbody id="leaderboard">
+      <tr><td colspan="5">Đang tải dữ liệu...</td></tr>
+    </tbody>
   </table>
 
   <script>
-    async function loadData() {
-      const res = await fetch("/api/xp");
-      const data = await res.json();
+    async function loadXP() {
+      try {
+        const res = await fetch("/api/xp");
+        const data = await res.json();
 
-      const tbody = document.getElementById("leaderboard");
-      tbody.innerHTML = "";
+        const tbody = document.getElementById("leaderboard");
+        tbody.innerHTML = "";
 
-      data.forEach((player, i) => {
-        const row = `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${player.name}</td>
-            <td>${player.lockedXP.toLocaleString()}</td>
-            <td>${player.currentXP.toLocaleString()}</td>
-            <td>${player.gainedXP.toLocaleString()}</td>
-          </tr>
-        `;
-        tbody.innerHTML += row;
-      });
+        data.forEach((p, i) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${p.name}</td>
+              <td>${p.lockedXP.toLocaleString()}</td>
+              <td>${p.currentXP.toLocaleString()}</td>
+              <td>${p.gainedXP.toLocaleString()}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error loading XP:", err);
+        document.getElementById("leaderboard").innerHTML =
+          "<tr><td colspan='5'>Không tải được dữ liệu</td></tr>";
+      }
     }
 
-    loadData();
+    loadXP();
   </script>
 </body>
 </html>
