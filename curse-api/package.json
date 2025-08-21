@@ -1,4 +1,14 @@
-"dependencies": {
-  "node-fetch": "^3.3.2",
-  "jsdom": "^24.0.0"
+{
+  "name": "sus-xp-leaderboard",
+  "version": "1.0.0",
+  "description": "XP Leaderboard for Curse of Aros SuS guild",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "jsdom": "^24.0.0"
+  }
 }
