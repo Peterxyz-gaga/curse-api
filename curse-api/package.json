@@ -1,5 +1,4 @@
-{
-  "name": "curse-api",
-  "version": "1.0.0",
-  "license": "MIT"
+"dependencies": {
+  "node-fetch": "^3.3.2",
+  "jsdom": "^24.0.0"
 }
