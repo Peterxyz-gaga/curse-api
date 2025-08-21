@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { JSDOM } from "jsdom";
 
 export default async function handler(req, res) {
+  // Danh sách player (Locked XP bạn chỉnh tay theo mốc muốn lock)
   const players = [
     { name: "sus quangtong", displayName: "SuS QuangTong", lockedXP: 1200000 },
     { name: "sus dominate", displayName: "SuS Dominate", lockedXP: 800000 },
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
       const html = await page.text();
       const dom = new JSDOM(html);
 
-      // tìm cột "Overall"
+      // Tìm dòng chứa "Overall" trong bảng
       const overallRow = [...dom.window.document.querySelectorAll("tr")]
         .find(r => r.textContent.includes("Overall"));
 
@@ -24,6 +25,7 @@ export default async function handler(req, res) {
       if (overallRow) {
         const tds = overallRow.querySelectorAll("td");
         if (tds.length > 1) {
+          // Cột thứ 2 là XP tổng
           currentXP = parseInt(tds[1].textContent.replace(/[^\d]/g, ""), 10);
         }
       }
@@ -36,7 +38,9 @@ export default async function handler(req, res) {
       };
     }));
 
+    // Sắp xếp theo Locked XP (giảm dần)
     results.sort((a, b) => b.lockedXP - a.lockedXP);
+
     res.status(200).json(results);
 
   } catch (err) {
