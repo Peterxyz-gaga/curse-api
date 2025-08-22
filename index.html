@@ -173,7 +173,7 @@
     function buildUrl(){
       const p = Math.max(1, parseInt(els.page.value || '1', 10));
       const lw = parseInt(els.lw.value || '0', 10);
-      return ${API_BASE}?p=${encodeURIComponent(p)}&lw=${encodeURIComponent(lw)};
+      return `${API_BASE}?p=${encodeURIComponent(p)}&lw=${encodeURIComponent(lw)}`;
     }
 
     async function fetchData(){
@@ -181,7 +181,7 @@
       try{
         const url = buildUrl();
         const res = await fetch(url, { cache: 'no-store' });
-        if(!res.ok) throw new Error(HTTP ${res.status});
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         if(!Array.isArray(json)) throw new Error('Dữ liệu trả về không phải mảng.');
         rawData = json.map((d, i) => ({
@@ -194,7 +194,7 @@
         }));
         applyFiltersAndRender();
         setLoading(false);
-        setStatus(true, Đã tải ${rawData.length} dòng từ ${new URL(buildUrl()).href});
+        setStatus(true, `Đã tải ${rawData.length} dòng từ ${new URL(buildUrl()).href}`);
       }catch(err){
         console.error(err);
         setError('Không tải được dữ liệu. Chi tiết: ' + err.message);
@@ -241,7 +241,7 @@
       const tbody = els.tbody;
       tbody.innerHTML = '';
       if(viewData.length === 0){
-        tbody.innerHTML = <tr><td colspan="5" class="center muted">Không có dữ liệu phù hợp.</td></tr>;
+        tbody.innerHTML = `<tr><td colspan="5" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
         return;
       }
       const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
@@ -262,13 +262,13 @@
         nameSpan.textContent = row.name || '(unknown)';
         if (row.name_color){
           // name_color comes as hex without '#'
-          nameSpan.style.color = #${row.name_color};
+          nameSpan.style.color = `#${row.name_color}`;
         }
         const chip = document.createElement('span');
         const skillCount = row.xps?.filter(x=>x>0).length || 0;
         chip.className = 'chip';
-        chip.title = ${skillCount} kỹ năng có XP > 0;
-        chip.textContent = ${skillCount} skills;
+        chip.title = `${skillCount} kỹ năng có XP > 0`;
+        chip.textContent = `${skillCount} skills`;
         tdName.appendChild(nameSpan);
         tdName.appendChild(chip);
         tr.appendChild(tdName);
@@ -287,7 +287,7 @@
 
         // Total Level
         const tdLv = document.createElement('td');
-        tdLv.innerHTML = <span class="lvl">${fmtNumber(row.total_level)}</span>;
+        tdLv.innerHTML = `<span class="lvl">${fmtNumber(row.total_level)}</span>`;
         tr.appendChild(tdLv);
 
         // Skills detail
