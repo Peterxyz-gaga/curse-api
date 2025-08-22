@@ -241,92 +241,125 @@
       });
     }
 
-    function renderTable(){
-      const tbody = els.tbody;
-      tbody.innerHTML = '';
-      if(viewData.length === 0){
-        tbody.innerHTML = `<tr><td colspan="7" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
-        return;
-      }
-      const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
-      const frag = document.createDocumentFragment();
-      viewData.forEach(row=>{
-        const tr = document.createElement('tr');
+function renderTable(){
+  const tbody = els.tbody;
+  tbody.innerHTML = '';
+  if(viewData.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
+    return;
+  }
+  const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
+  const frag = document.createDocumentFragment();
+  viewData.forEach(row=>{
+    const tr = document.createElement('tr');
 
-        // Rank
-        const tdRank = document.createElement('td');
-        tdRank.className = 'mono muted';
-        tdRank.textContent = row.rank;
-        tr.appendChild(tdRank);
+    // Rank
+    const tdRank = document.createElement('td');
+    tdRank.className = 'mono muted';
+    tdRank.textContent = row.rank;
+    tr.appendChild(tdRank);
 
-        // Name
-        const tdName = document.createElement('td');
-        tdName.className = 'name';
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = row.name || '(unknown)';
-        if (row.name_color){
-          nameSpan.style.color = `#${row.name_color}`;
-        }
-        const chip = document.createElement('span');
-        const skillCount = row.xps?.filter(x=>x>0).length || 0;
-        chip.className = 'chip';
-        chip.title = `${skillCount} kỹ năng có XP > 0`;
-        chip.textContent = `${skillCount} skills`;
-        tdName.appendChild(nameSpan);
-        tdName.appendChild(chip);
-        tr.appendChild(tdName);
-
-        // XP
-        const tdXp = document.createElement('td');
-        const xpTop = document.createElement('div');
-        xpTop.className = 'mono';
-        xpTop.textContent = fmtNumber(row.xp);
-        const bar = document.createElement('div');
-        bar.className = 'xpbar'; const fill = document.createElement('i');
-        fill.style.width = Math.max(2, Math.round((row.xp/maxXp)*100)) + '%';
-        bar.appendChild(fill);
-        tdXp.appendChild(xpTop); tdXp.appendChild(bar);
-        tr.appendChild(tdXp);
-
-        // Locked XP
-        const tdLocked = document.createElement('td');
-        tdLocked.className = 'mono muted';
-        tdLocked.textContent = fmtNumber(row.locked_xp || 0);
-        tr.appendChild(tdLocked);
-
-        // Gained XP
-        const tdGained = document.createElement('td');
-        tdGained.className = 'mono';
-        tdGained.textContent = fmtNumber(row.gained_xp || 0);
-        tr.appendChild(tdGained);
-
-        // Total Level
-        const tdLv = document.createElement('td');
-        tdLv.innerHTML = `<span class="lvl">${fmtNumber(row.total_level)}</span>`;
-        tr.appendChild(tdLv);
-
-        // Skills detail
-        const tdSkills = document.createElement('td');
-        const btn = document.createElement('button');
-        btn.className = 'ghost';
-        btn.textContent = 'Chi tiết';
-        const detail = document.createElement('div');
-        detail.className = 'muted mono';
-        detail.style.marginTop = '6px';
-        detail.style.display = 'none';
-        const arr = (row.xps || []).map((v,i)=>`S${i+1}:${fmtNumber(v)}`).join(' · ');
-        detail.textContent = arr || '—';
-        btn.addEventListener('click', ()=>{
-          detail.style.display = detail.style.display==='none' ? 'block' : 'none';
-        });
-        tdSkills.appendChild(btn);
-        tdSkills.appendChild(detail);
-        tr.appendChild(tdSkills);
-
-        frag.appendChild(tr);
-      });
-      tbody.appendChild(frag);
+    // Name
+    const tdName = document.createElement('td');
+    tdName.className = 'name';
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = row.name || '(unknown)';
+    if (row.name_color){
+      nameSpan.style.color = `#${row.name_color}`;
     }
+    const chip = document.createElement('span');
+    const skillCount = row.xps?.filter(x=>x>0).length || 0;
+    chip.className = 'chip';
+    chip.title = `${skillCount} kỹ năng có XP > 0`;
+    chip.textContent = `${skillCount} skills`;
+    tdName.appendChild(nameSpan);
+    tdName.appendChild(chip);
+    tr.appendChild(tdName);
+
+    // XP
+    const tdXp = document.createElement('td');
+    const xpTop = document.createElement('div');
+    xpTop.className = 'mono';
+    xpTop.textContent = fmtNumber(row.xp);
+    const bar = document.createElement('div');
+    bar.className = 'xpbar'; const fill = document.createElement('i');
+    fill.style.width = Math.max(2, Math.round((row.xp/maxXp)*100)) + '%';
+    bar.appendChild(fill);
+    tdXp.appendChild(xpTop); tdXp.appendChild(bar);
+    tr.appendChild(tdXp);
+
+    // Locked XP (editable)
+    const tdLocked = document.createElement('td');
+    tdLocked.className = 'mono';
+    const lockedSpan = document.createElement('span');
+    lockedSpan.textContent = fmtNumber(row.locked_xp || 0);
+
+    const lockedInput = document.createElement('input');
+    lockedInput.type = 'number';
+    lockedInput.value = row.locked_xp || 0;
+    lockedInput.style.display = 'none';
+    lockedInput.style.width = '100px';
+
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'ghost';
+    btnEdit.textContent = 'Edit';
+
+    btnEdit.addEventListener('click', ()=>{
+      if (btnEdit.textContent === 'Edit'){
+        lockedSpan.style.display = 'none';
+        lockedInput.style.display = 'inline-block';
+        btnEdit.textContent = 'Save';
+      } else {
+        const newVal = parseInt(lockedInput.value || '0', 10);
+        row.locked_xp = newVal;
+        lockedSpan.textContent = fmtNumber(newVal);
+        lockedSpan.style.display = 'inline';
+        lockedInput.style.display = 'none';
+        btnEdit.textContent = 'Edit';
+        // cập nhật lại Gained XP
+        tdGained.textContent = fmtNumber(row.gained_xp || 0);
+      }
+    });
+
+    tdLocked.appendChild(lockedSpan);
+    tdLocked.appendChild(lockedInput);
+    tdLocked.appendChild(btnEdit);
+    tr.appendChild(tdLocked);
+
+    // Gained XP
+    const tdGained = document.createElement('td');
+    tdGained.className = 'mono';
+    tdGained.textContent = fmtNumber(row.gained_xp || 0);
+    tr.appendChild(tdGained);
+
+    // Total Level
+    const tdLv = document.createElement('td');
+    tdLv.innerHTML = `<span class="lvl">${fmtNumber(row.total_level)}</span>`;
+    tr.appendChild(tdLv);
+
+    // Skills detail
+    const tdSkills = document.createElement('td');
+    const btn = document.createElement('button');
+    btn.className = 'ghost';
+    btn.textContent = 'Chi tiết';
+    const detail = document.createElement('div');
+    detail.className = 'muted mono';
+    detail.style.marginTop = '6px';
+    detail.style.display = 'none';
+    const arr = (row.xps || []).map((v,i)=>`S${i+1}:${fmtNumber(v)}`).join(' · ');
+    detail.textContent = arr || '—';
+    btn.addEventListener('click', ()=>{
+      detail.style.display = detail.style.display==='none' ? 'block' : 'none';
+    });
+    tdSkills.appendChild(btn);
+    tdSkills.appendChild(detail);
+    tr.appendChild(tdSkills);
+
+    frag.appendChild(tr);
+  });
+  tbody.appendChild(frag);
+}
+
 
     els.btnReload.addEventListener('click', fetchData);
     els.btnPrev.addEventListener('click', ()=>{
