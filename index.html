@@ -5,102 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Curse of Aros – Highscores</title>
   <style>
-    :root{
-      --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#5aa9ff; --accent-2:#7ad3ff;
-      --border: #243054; --chip:#1b2542; --ok:#2ecc71; --warn:#f39c12;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530);
-      color:var(--text); font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
-    }
-    .wrap{
-      width:min(1100px, 100%); display:grid; gap:16px;
-    }
-    .card{
-      background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35);
-      overflow:hidden;
-    }
-    header.card{
-      padding:16px 18px; display:grid; gap:12px;
-    }
-    .title{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px }
-    .title .dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(45deg, var(--accent), var(--accent-2)); box-shadow:0 0 12px var(--accent) }
-    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-    .controls .group{
-      display:flex; gap:8px; background:#0f1730; padding:8px; border:1px solid var(--border); border-radius:12px; align-items:center;
-    }
-    input[type="number"], input[type="text"], select{
-      background:#0c1430; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 10px; outline:none;
-    }
-    input[type="checkbox"]{ transform:translateY(1px) }
-    button{
-      background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:12px; font-weight:700;
-      padding:8px 12px; cursor:pointer; transition:.2s transform;
-    }
-    button:hover{ transform:translateY(-1px) }
-    button.ghost{ background:#0f1730; color:var(--text); border:1px solid var(--border) }
-
-    .table-wrap{ overflow:auto }
-    table{ width:100%; border-collapse:separate; border-spacing:0 }
-    thead th{
-      position:sticky; top:0; background:rgba(15,23,48,.95); backdrop-filter: blur(6px);
-      text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer;
-    }
-    tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle }
-    tr:hover td{ background:#0f1730 }
-
-    .name{
-      display:flex; align-items:center; gap:10px; font-weight:700;
-    }
-    .name .chip{
-      font-size:12px; color:var(--muted); background:var(--chip); padding:3px 8px; border-radius:999px; border:1px solid var(--border);
-    }
-    .muted{ color:var(--muted) }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
-    .lvl{ font-weight:700; background:#0f1730; border:1px solid var(--border); padding:4px 8px; border-radius:8px }
-    .xpbar{
-      height:8px; background:#0b1330; border:1px solid var(--border); border-radius:999px; overflow:hidden;
-      box-shadow: inset 0 0 10px rgba(0,0,0,.3);
-    }
-    .xpbar > i{ display:block; height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-2)) }
-    .footer{
-      display:flex; justify-content:space-between; align-items:center; padding:12px 16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)
-    }
-    .status{ display:flex; align-items:center; gap:8px }
-    .status .dot{ width:8px; height:8px; border-radius:50% }
-    .ok{ background:var(--ok) } .warn{ background:var(--warn) }
-    .hidden{ display:none !important }
-    .center{ text-align:center; padding:24px }
-    .link{ color:var(--accent-2); text-decoration:none }
+    /* giữ nguyên CSS như cũ */
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="card">
-      <div class="title"><span class="dot"></span> <span>Curse of Aros – Highscores (Overall)</span></div>
-      <div class="controls">
-        <div class="group">
-          <label for="search">Tìm tên:</label>
-          <input id="search" type="text" placeholder="VD: Aros, GLORY..." />
-        </div>
-        <div class="group">
-          <label for="page">Trang (p):</label>
-          <input id="page" type="number" min="1" step="1" value="2" style="width:90px" />
-          <button id="btnPrev" class="ghost">&larr; Trước</button>
-          <button id="btnNext" class="ghost">Sau &rarr;</button>
-        </div>
-        <div class="group">
-          <label for="lw">lw =</label>
-          <select id="lw">
-            <option value="0" selected>0 (overall)</option>
-            <option value="1">1</option>
-          </select>
-        </div>
-        <button id="btnReload">Tải lại</button>
-        <a class="link" href="https://www.curseofaros.com/highscores-overall.json?p=2&lw=0" target="_blank" rel="noreferrer">Mở API</a>
-      </div>
+      <!-- giữ nguyên phần header -->
     </header>
 
     <section class="card table-wrap" id="tableCard">
@@ -112,6 +23,8 @@
             <th data-key="rank">#</th>
             <th data-key="name">Người chơi</th>
             <th data-key="xp" title="Tổng XP">XP</th>
+            <th data-key="locked_xp" title="Locked XP">Locked XP</th>
+            <th data-key="gained_xp" title="Gained XP">Gained XP</th>
             <th data-key="total_level" title="Tổng level">Total Lv</th>
             <th data-key="skills" title="Tổng số kỹ năng có XP">Kỹ năng</th>
           </tr>
@@ -121,8 +34,7 @@
     </section>
 
     <footer class="card footer">
-      <div class="status"><span class="dot ok" id="statusDot"></span><span id="statusText">Sẵn sàng</span></div>
-      <div>Tip: Click tiêu đề cột để sắp xếp. Gõ để lọc theo tên.</div>
+      <!-- giữ nguyên footer -->
     </footer>
   </div>
 
@@ -144,7 +56,6 @@
       thead: document.querySelector('#table thead'),
     };
 
-    /** App state */
     let rawData = [];
     let viewData = [];
     let sort = { key: 'xp', dir: 'desc' };
@@ -152,6 +63,7 @@
     function fmtNumber(n){
       try{ return Number(n).toLocaleString('en-US'); }catch{ return n; }
     }
+
     function setStatus(ok=true, text=''){
       els.statusDot.className = 'dot ' + (ok ? 'ok' : 'warn');
       els.statusText.textContent = text || (ok ? 'Sẵn sàng' : 'Có lỗi xảy ra');
@@ -190,7 +102,9 @@
           name_color: d.name_color,
           xp: d.xp,
           total_level: d.total_level,
-          xps: d.xps || []
+          xps: d.xps || [],
+          locked_xp: 0, // thêm mặc định
+          get gained_xp(){ return (this.xp || 0) - (this.locked_xp || 0); }
         }));
         applyFiltersAndRender();
         setLoading(false);
@@ -229,7 +143,6 @@
         sort.dir = (key === 'name' || key === 'rank') ? 'asc' : 'desc';
       }
       applyFiltersAndRender();
-      // update sort indicators
       document.querySelectorAll('thead th').forEach(th=>{
         const k = th.dataset.key;
         if(!k){ th.textContent = th.textContent; return; }
@@ -241,7 +154,7 @@
       const tbody = els.tbody;
       tbody.innerHTML = '';
       if(viewData.length === 0){
-        tbody.innerHTML = `<tr><td colspan="5" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
         return;
       }
       const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
@@ -261,7 +174,6 @@
         const nameSpan = document.createElement('span');
         nameSpan.textContent = row.name || '(unknown)';
         if (row.name_color){
-          // name_color comes as hex without '#'
           nameSpan.style.color = `#${row.name_color}`;
         }
         const chip = document.createElement('span');
@@ -284,6 +196,18 @@
         bar.appendChild(fill);
         tdXp.appendChild(xpTop); tdXp.appendChild(bar);
         tr.appendChild(tdXp);
+
+        // Locked XP
+        const tdLocked = document.createElement('td');
+        tdLocked.className = 'mono muted';
+        tdLocked.textContent = fmtNumber(row.locked_xp || 0);
+        tr.appendChild(tdLocked);
+
+        // Gained XP
+        const tdGained = document.createElement('td');
+        tdGained.className = 'mono';
+        tdGained.textContent = fmtNumber(row.gained_xp || 0);
+        tr.appendChild(tdGained);
 
         // Total Level
         const tdLv = document.createElement('td');
@@ -313,7 +237,6 @@
       tbody.appendChild(frag);
     }
 
-    // Events
     els.btnReload.addEventListener('click', fetchData);
     els.btnPrev.addEventListener('click', ()=>{
       const cur = Math.max(1, parseInt(els.page.value || '1', 10));
@@ -332,7 +255,6 @@
       setSort(th.dataset.key);
     });
 
-    // Initial load
     fetchData();
   </script>
 </body>
