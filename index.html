@@ -1,83 +1,339 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>SuS XP Leaderboard</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Curse of Aros – Highscores</title>
   <style>
-    body {
-      background-color: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
+    :root{
+      --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#5aa9ff; --accent-2:#7ad3ff;
+      --border: #243054; --chip:#1b2542; --ok:#2ecc71; --warn:#f39c12;
     }
-    h1 {
-      margin: 20px 0;
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530);
+      color:var(--text); font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    table {
-      margin: auto;
-      border-collapse: collapse;
-      width: 80%;
-      background: #222;
-      border-radius: 8px;
-      overflow: hidden;
+    .wrap{
+      width:min(1100px, 100%); display:grid; gap:16px;
     }
-    th, td {
-      padding: 12px 16px;
-      border: 1px solid #444;
+    .card{
+      background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+      overflow:hidden;
     }
-    th {
-      background: #333;
+    header.card{
+      padding:16px 18px; display:grid; gap:12px;
     }
-    tr:nth-child(even) {
-      background: #1a1a1a;
+    .title{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px }
+    .title .dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(45deg, var(--accent), var(--accent-2)); box-shadow:0 0 12px var(--accent) }
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+    .controls .group{
+      display:flex; gap:8px; background:#0f1730; padding:8px; border:1px solid var(--border); border-radius:12px; align-items:center;
     }
+    input[type="number"], input[type="text"], select{
+      background:#0c1430; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 10px; outline:none;
+    }
+    input[type="checkbox"]{ transform:translateY(1px) }
+    button{
+      background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:12px; font-weight:700;
+      padding:8px 12px; cursor:pointer; transition:.2s transform;
+    }
+    button:hover{ transform:translateY(-1px) }
+    button.ghost{ background:#0f1730; color:var(--text); border:1px solid var(--border) }
+
+    .table-wrap{ overflow:auto }
+    table{ width:100%; border-collapse:separate; border-spacing:0 }
+    thead th{
+      position:sticky; top:0; background:rgba(15,23,48,.95); backdrop-filter: blur(6px);
+      text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer;
+    }
+    tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle }
+    tr:hover td{ background:#0f1730 }
+
+    .name{
+      display:flex; align-items:center; gap:10px; font-weight:700;
+    }
+    .name .chip{
+      font-size:12px; color:var(--muted); background:var(--chip); padding:3px 8px; border-radius:999px; border:1px solid var(--border);
+    }
+    .muted{ color:var(--muted) }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
+    .lvl{ font-weight:700; background:#0f1730; border:1px solid var(--border); padding:4px 8px; border-radius:8px }
+    .xpbar{
+      height:8px; background:#0b1330; border:1px solid var(--border); border-radius:999px; overflow:hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,.3);
+    }
+    .xpbar > i{ display:block; height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-2)) }
+    .footer{
+      display:flex; justify-content:space-between; align-items:center; padding:12px 16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)
+    }
+    .status{ display:flex; align-items:center; gap:8px }
+    .status .dot{ width:8px; height:8px; border-radius:50% }
+    .ok{ background:var(--ok) } .warn{ background:var(--warn) }
+    .hidden{ display:none !important }
+    .center{ text-align:center; padding:24px }
+    .link{ color:var(--accent-2); text-decoration:none }
   </style>
 </head>
 <body>
-  <h1>SuS XP Leaderboard</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Rank</th>
-        <th>Tên</th>
-        <th>Locked XP</th>
-        <th>Current XP</th>
-        <th>Gained XP</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard">
-      <tr><td colspan="5">Đang tải dữ liệu...</td></tr>
-    </tbody>
-  </table>
+  <div class="wrap">
+    <header class="card">
+      <div class="title"><span class="dot"></span> <span>Curse of Aros – Highscores (Overall)</span></div>
+      <div class="controls">
+        <div class="group">
+          <label for="search">Tìm tên:</label>
+          <input id="search" type="text" placeholder="VD: Aros, GLORY..." />
+        </div>
+        <div class="group">
+          <label for="page">Trang (p):</label>
+          <input id="page" type="number" min="1" step="1" value="2" style="width:90px" />
+          <button id="btnPrev" class="ghost">&larr; Trước</button>
+          <button id="btnNext" class="ghost">Sau &rarr;</button>
+        </div>
+        <div class="group">
+          <label for="lw">lw =</label>
+          <select id="lw">
+            <option value="0" selected>0 (overall)</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <button id="btnReload">Tải lại</button>
+        <a class="link" href="https://www.curseofaros.com/highscores-overall.json?p=2&lw=0" target="_blank" rel="noreferrer">Mở API</a>
+      </div>
+    </header>
+
+    <section class="card table-wrap" id="tableCard">
+      <div class="center" id="loading">Đang tải dữ liệu...</div>
+      <div class="center hidden" id="error">Không tải được dữ liệu. Hãy kiểm tra mạng hoặc CORS.</div>
+      <table id="table" class="hidden" aria-label="Highscores table">
+        <thead>
+          <tr>
+            <th data-key="rank">#</th>
+            <th data-key="name">Người chơi</th>
+            <th data-key="xp" title="Tổng XP">XP</th>
+            <th data-key="total_level" title="Tổng level">Total Lv</th>
+            <th data-key="skills" title="Tổng số kỹ năng có XP">Kỹ năng</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+
+    <footer class="card footer">
+      <div class="status"><span class="dot ok" id="statusDot"></span><span id="statusText">Sẵn sàng</span></div>
+      <div>Tip: Click tiêu đề cột để sắp xếp. Gõ để lọc theo tên.</div>
+    </footer>
+  </div>
 
   <script>
-    async function loadXP() {
-      try {
-        const res = await fetch("/api/xp");
-        const data = await res.json();
+    const API_BASE = 'https://www.curseofaros.com/highscores-overall.json';
+    const els = {
+      page: document.getElementById('page'),
+      lw: document.getElementById('lw'),
+      search: document.getElementById('search'),
+      btnPrev: document.getElementById('btnPrev'),
+      btnNext: document.getElementById('btnNext'),
+      btnReload: document.getElementById('btnReload'),
+      statusDot: document.getElementById('statusDot'),
+      statusText: document.getElementById('statusText'),
+      loading: document.getElementById('loading'),
+      error: document.getElementById('error'),
+      table: document.getElementById('table'),
+      tbody: document.getElementById('tbody'),
+      thead: document.querySelector('#table thead'),
+    };
 
-        const tbody = document.getElementById("leaderboard");
-        tbody.innerHTML = "";
+    /** App state */
+    let rawData = [];
+    let viewData = [];
+    let sort = { key: 'xp', dir: 'desc' };
 
-        data.forEach((p, i) => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${i + 1}</td>
-              <td>${p.name}</td>
-              <td>${p.lockedXP.toLocaleString()}</td>
-              <td>${p.currentXP.toLocaleString()}</td>
-              <td>${p.gainedXP.toLocaleString()}</td>
-            </tr>
-          `;
-        });
-      } catch (err) {
-        console.error("Error loading XP:", err);
-        document.getElementById("leaderboard").innerHTML =
-          "<tr><td colspan='5'>Không tải được dữ liệu</td></tr>";
+    function fmtNumber(n){
+      try{ return Number(n).toLocaleString('en-US'); }catch{ return n; }
+    }
+    function setStatus(ok=true, text=''){
+      els.statusDot.className = 'dot ' + (ok ? 'ok' : 'warn');
+      els.statusText.textContent = text || (ok ? 'Sẵn sàng' : 'Có lỗi xảy ra');
+    }
+    function setLoading(isLoading){
+      els.loading.classList.toggle('hidden', !isLoading);
+      els.table.classList.toggle('hidden', isLoading);
+      els.error.classList.add('hidden');
+      setStatus(isLoading, isLoading ? 'Đang tải dữ liệu...' : 'Sẵn sàng');
+    }
+    function setError(msg){
+      els.error.textContent = msg || 'Không tải được dữ liệu.';
+      els.error.classList.remove('hidden');
+      els.table.classList.add('hidden');
+      els.loading.classList.add('hidden');
+      setStatus(false, msg || 'Lỗi tải dữ liệu');
+    }
+
+    function buildUrl(){
+      const p = Math.max(1, parseInt(els.page.value || '1', 10));
+      const lw = parseInt(els.lw.value || '0', 10);
+      return ${API_BASE}?p=${encodeURIComponent(p)}&lw=${encodeURIComponent(lw)};
+    }
+
+    async function fetchData(){
+      setLoading(true);
+      try{
+        const url = buildUrl();
+        const res = await fetch(url, { cache: 'no-store' });
+        if(!res.ok) throw new Error(HTTP ${res.status});
+        const json = await res.json();
+        if(!Array.isArray(json)) throw new Error('Dữ liệu trả về không phải mảng.');
+        rawData = json.map((d, i) => ({
+          rank: i + 1,
+          name: d.name,
+          name_color: d.name_color,
+          xp: d.xp,
+          total_level: d.total_level,
+          xps: d.xps || []
+        }));
+        applyFiltersAndRender();
+        setLoading(false);
+        setStatus(true, Đã tải ${rawData.length} dòng từ ${new URL(buildUrl()).href});
+      }catch(err){
+        console.error(err);
+        setError('Không tải được dữ liệu. Chi tiết: ' + err.message);
       }
     }
 
-    loadXP();
+    function applyFiltersAndRender(){
+      const q = (els.search.value || '').trim().toLowerCase();
+      viewData = rawData.filter(row => !q || (row.name || '').toLowerCase().includes(q));
+      sortData();
+      renderTable();
+    }
+
+    function sortData(){
+      const { key, dir } = sort;
+      const mul = dir === 'asc' ? 1 : -1;
+      viewData.sort((a,b)=>{
+        const av = key === 'skills' ? (a.xps?.filter(x=>x>0).length||0) : a[key];
+        const bv = key === 'skills' ? (b.xps?.filter(x=>x>0).length||0) : b[key];
+        if (typeof av === 'string' && typeof bv === 'string'){
+          return av.localeCompare(bv) * mul;
+        }
+        return ((av ?? 0) - (bv ?? 0)) * mul;
+      });
+    }
+
+    function setSort(key){
+      if (sort.key === key){
+        sort.dir = (sort.dir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sort.key = key;
+        sort.dir = (key === 'name' || key === 'rank') ? 'asc' : 'desc';
+      }
+      applyFiltersAndRender();
+      // update sort indicators
+      document.querySelectorAll('thead th').forEach(th=>{
+        const k = th.dataset.key;
+        if(!k){ th.textContent = th.textContent; return; }
+        th.innerHTML = th.textContent.replace(/[▲▼]/g,'') + (k===sort.key ? (sort.dir==='asc'?' ▲':' ▼') : '');
+      });
+    }
+
+    function renderTable(){
+      const tbody = els.tbody;
+      tbody.innerHTML = '';
+      if(viewData.length === 0){
+        tbody.innerHTML = <tr><td colspan="5" class="center muted">Không có dữ liệu phù hợp.</td></tr>;
+        return;
+      }
+      const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
+      const frag = document.createDocumentFragment();
+      viewData.forEach(row=>{
+        const tr = document.createElement('tr');
+
+        // Rank
+        const tdRank = document.createElement('td');
+        tdRank.className = 'mono muted';
+        tdRank.textContent = row.rank;
+        tr.appendChild(tdRank);
+
+        // Name
+        const tdName = document.createElement('td');
+        tdName.className = 'name';
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = row.name || '(unknown)';
+        if (row.name_color){
+          // name_color comes as hex without '#'
+          nameSpan.style.color = #${row.name_color};
+        }
+        const chip = document.createElement('span');
+        const skillCount = row.xps?.filter(x=>x>0).length || 0;
+        chip.className = 'chip';
+        chip.title = ${skillCount} kỹ năng có XP > 0;
+        chip.textContent = ${skillCount} skills;
+        tdName.appendChild(nameSpan);
+        tdName.appendChild(chip);
+        tr.appendChild(tdName);
+
+        // XP
+        const tdXp = document.createElement('td');
+        const xpTop = document.createElement('div');
+        xpTop.className = 'mono';
+        xpTop.textContent = fmtNumber(row.xp);
+        const bar = document.createElement('div');
+        bar.className = 'xpbar'; const fill = document.createElement('i');
+        fill.style.width = Math.max(2, Math.round((row.xp/maxXp)*100)) + '%';
+        bar.appendChild(fill);
+        tdXp.appendChild(xpTop); tdXp.appendChild(bar);
+        tr.appendChild(tdXp);
+
+        // Total Level
+        const tdLv = document.createElement('td');
+        tdLv.innerHTML = <span class="lvl">${fmtNumber(row.total_level)}</span>;
+        tr.appendChild(tdLv);
+
+        // Skills detail
+        const tdSkills = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.className = 'ghost';
+        btn.textContent = 'Chi tiết';
+        const detail = document.createElement('div');
+        detail.className = 'muted mono';
+        detail.style.marginTop = '6px';
+        detail.style.display = 'none';
+        const arr = (row.xps || []).map((v,i)=>`S${i+1}:${fmtNumber(v)}`).join(' · ');
+        detail.textContent = arr || '—';
+        btn.addEventListener('click', ()=>{
+          detail.style.display = detail.style.display==='none' ? 'block' : 'none';
+        });
+        tdSkills.appendChild(btn);
+        tdSkills.appendChild(detail);
+        tr.appendChild(tdSkills);
+
+        frag.appendChild(tr);
+      });
+      tbody.appendChild(frag);
+    }
+
+    // Events
+    els.btnReload.addEventListener('click', fetchData);
+    els.btnPrev.addEventListener('click', ()=>{
+      const cur = Math.max(1, parseInt(els.page.value || '1', 10));
+      if(cur > 1){ els.page.value = String(cur - 1); fetchData(); }
+    });
+    els.btnNext.addEventListener('click', ()=>{
+      const cur = Math.max(1, parseInt(els.page.value || '1', 10));
+      els.page.value = String(cur + 1); fetchData();
+    });
+    els.page.addEventListener('change', fetchData);
+    els.lw.addEventListener('change', fetchData);
+    els.search.addEventListener('input', ()=> applyFiltersAndRender());
+    els.thead.addEventListener('click', (e)=>{
+      const th = e.target.closest('th');
+      if(!th || !th.dataset.key) return;
+      setSort(th.dataset.key);
+    });
+
+    // Initial load
+    fetchData();
   </script>
 </body>
 </html>
