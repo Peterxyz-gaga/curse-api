@@ -10,8 +10,7 @@ module.exports = async (req, res) => {
   let browser = null;
 
   try {
-    // CẤU HÌNH TẢI CHROME TỪ XA (Bắt buộc để tránh lỗi 50MB)
-    // Link này chứa bản Chrome v123 tương thích với Vercel mới
+    // Tải Chrome v123 từ xa (bản dành cho Node 20)
     const executablePath = await chromium.executablePath(
       "https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar"
     );
@@ -25,8 +24,6 @@ module.exports = async (req, res) => {
     });
 
     const page = await browser.newPage();
-    
-    // Giả lập người dùng
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
 
     for (const rawName of userList) {
@@ -34,8 +31,8 @@ module.exports = async (req, res) => {
       const url = `https://www.curseofaros.com/highscores-personal?user=${encodeURIComponent(username)}`;
 
       try {
-        // Tăng thời gian chờ lên một chút vì cần tải Chrome về
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 8000 });
+        // Tối ưu: Chỉ chờ tối đa 6 giây
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 6000 });
 
         const xp = await page.evaluate(() => {
           const rows = Array.from(document.querySelectorAll('tr'));
@@ -59,7 +56,6 @@ module.exports = async (req, res) => {
 
   } catch (error) {
     console.error("Lỗi Browser:", error);
-    // Trả về rỗng để web không bị báo lỗi 500
     return res.status(200).json([]);
   } finally {
     if (browser) await browser.close();
