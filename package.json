@@ -2,7 +2,7 @@
   "name": "curse-api",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer-core": "^19.8.0",
-    "@sparticuz/chromium": "^112.0.0"
+    "puppeteer-core": "^21.5.2",
+    "@sparticuz/chromium": "^119.0.2"
   }
 }
