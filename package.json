@@ -2,7 +2,7 @@
   "name": "curse-api",
   "version": "1.0.0",
   "dependencies": {
-    "axios": "^1.6.0",
-    "cheerio": "^1.0.0-rc.12"
+    "puppeteer-core": "^19.8.0",
+    "@sparticuz/chromium": "^112.0.0"
   }
 }
