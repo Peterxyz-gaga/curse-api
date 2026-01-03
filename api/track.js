@@ -1,11 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-// Sử dụng module.exports để tránh lỗi Server Error 500
+// Sử dụng module.exports thay vì export default để tránh lỗi 500
 module.exports = async (req, res) => {
   const { users } = req.query;
-  
-  // Nếu không có users, trả về mảng rỗng ngay
+
+  // Nếu không có users, trả về mảng rỗng
   if (!users) return res.status(200).json([]);
 
   const userList = users.split(',');
@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     const username = decodeURIComponent(rawName).trim(); 
     
     try {
-      // QUAN TRỌNG: Dùng dấu huyền ` (nằm dưới phím Esc) để nối chuỗi
+      // QUAN TRỌNG: Dùng dấu huyền ` (phím dưới nút Esc) để tạo link đúng
       const url = `https://www.curseofaros.com/highscores-personal?user=${encodeURIComponent(username)}`;
       
       const response = await axios.get(url, {
@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
         const rowText = $(el).text();
         if (rowText.includes('Overall')) {
            const tds = $(el).find('td');
-           // Lấy cột 3 hoặc cột 2 tùy giao diện
+           // Lấy cột 3 hoặc 2 tùy giao diện
            let xpText = tds.eq(3).text().trim(); 
            if (!xpText.match(/^\d/)) xpText = tds.eq(2).text().trim();
 
@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
     }
   }));
 
-  // Sắp xếp XP từ cao xuống thấp
+  // Sắp xếp XP cao nhất lên đầu
   results.sort((a, b) => b.xp - a.xp);
 
   res.status(200).json(results);
