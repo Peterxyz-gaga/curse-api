@@ -86,7 +86,6 @@
 
  <script>
     // --- DANH SÁCH THÀNH VIÊN VÀ XP KHỞI ĐIỂM ---
-    // Tôi đã chuyển đổi danh sách của bạn thành code ở đây
     const CLAN_DATA = [
         { name: "SuS TraDaVN", start: 45361534920 },
         { name: "SuS Zet DiY", start: 39084720587 },
@@ -146,28 +145,22 @@
       els.btnReload.innerText = "Đang tải...";
 
       try{
-        // Lấy danh sách tên để gửi API
         const nameList = CLAN_DATA.map(m => encodeURIComponent(m.name)).join(',');
 
-        // Gọi API Backend
         const res = await fetch(`/api/track?users=${nameList}`);
         if(!res.ok) throw new Error('Lỗi kết nối API');
         
         const apiData = await res.json();
         
-        // Hợp nhất dữ liệu API với dữ liệu Start XP của Clan
         const mergedData = CLAN_DATA.map(member => {
-            // Tìm kết quả từ API tương ứng với tên
             const apiResult = apiData.find(d => d.name === member.name) || { xp: 0, found: false };
             return {
-                ...member, // Giữ lại start xp
+                ...member, 
                 currentXP: apiResult.xp,
                 found: apiResult.found
             };
         });
         
-        // Sắp xếp theo Gained XP (Ai cày nhiều nhất lên đầu)
-        // Nếu muốn xếp theo Tổng XP thì đổi thành b.currentXP - a.currentXP
         mergedData.sort((a, b) => {
             const gainedA = a.currentXP - (getStoredLocked(a.name) || a.start);
             const gainedB = b.currentXP - (getStoredLocked(b.name) || b.start);
@@ -187,7 +180,6 @@
       }
     }
 
-    // Hàm lấy Locked XP: Ưu tiên LocalStorage > Mặc định trong code
     function getStoredLocked(name){
         const stored = localStorage.getItem(`locked_xp_${name}`);
         return stored ? parseInt(stored) : null;
@@ -199,16 +191,12 @@
       data.forEach((row, index) => {
         const tr = document.createElement('tr');
         
-        // Logic chọn Locked XP:
-        // 1. Nếu người dùng đã từng sửa tay trên web -> Lấy số đã sửa (trong LocalStorage)
-        // 2. Nếu chưa sửa gì cả -> Lấy số mặc định bạn cung cấp (row.start)
         let lockedVal = getStoredLocked(row.name);
         if (lockedVal === null) lockedVal = row.start;
 
         const currentXP = row.currentXP;
         const gainedXP = currentXP - lockedVal;
 
-        // Tạo nội dung HTML
         tr.innerHTML = `
             <td class="muted">${index + 1}</td>
             <td class="name">${row.name}</td>
@@ -230,20 +218,15 @@
       });
     }
 
-    // Hàm cập nhật khi người dùng nhập tay số mới
     window.updateRow = function(name, currentXP, newLockedVal, gainedId) {
         const lockedVal = parseInt(newLockedVal) || 0;
-        
-        // Lưu số mới vào trình duyệt
         localStorage.setItem(`locked_xp_${name}`, lockedVal);
 
-        // Tính lại hiển thị
         const gained = currentXP - lockedVal;
         const gainedEl = document.getElementById(gainedId);
         
         gainedEl.innerText = (gained > 0 ? "+" : "") + fmtNumber(gained);
         
-        // Đổi màu
         if(gained > 0) gainedEl.className = "mono plus";
         else gainedEl.className = "mono neutral";
     };
