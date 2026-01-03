@@ -3,18 +3,18 @@ const puppeteer = require('puppeteer-core');
 
 module.exports = async (req, res) => {
   const { users } = req.query;
-  if (!users) return res.status(200).json([]);
-
-  const userList = users.split(',');
+  // Cho phép chạy test kể cả khi không nhập user (để check chrome)
+  const userList = (users || "SuS SadSaiki").split(',');
   const results = [];
   let browser = null;
 
   try {
-    // Cấu hình tải Chrome
+    // 1. Cấu hình link tải Chrome (Bản v123.0.1 cho Node 20)
     const executablePath = await chromium.executablePath(
       "https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar"
     );
 
+    // 2. Khởi động trình duyệt
     browser = await puppeteer.launch({
       args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
       defaultViewport: chromium.defaultViewport,
@@ -26,15 +26,13 @@ module.exports = async (req, res) => {
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
 
-    // Chạy thử 1 người đầu tiên để test lỗi
-    const rawName = userList[0];
-    const username = decodeURIComponent(rawName).trim();
+    // 3. Test thử trang đầu tiên
+    const username = decodeURIComponent(userList[0]).trim();
     const url = `https://www.curseofaros.com/highscores-personal?user=${encodeURIComponent(username)}`;
 
-    console.log(`Đang tải: ${url}`);
-    
-    // Tăng thời gian chờ lên 15 giây (vì lần đầu phải tải Chrome về)
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    console.log(`Đang truy cập: ${url}`);
+    // Tăng thời gian chờ lên 20s (để kịp tải Chrome về)
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
 
     const xp = await page.evaluate(() => {
         const rows = Array.from(document.querySelectorAll('tr'));
@@ -45,18 +43,18 @@ module.exports = async (req, res) => {
             return parseInt(text.replace(/,/g, '')) || 0;
           }
         }
-        return 0;
+        return "Không tìm thấy Overall";
     });
 
-    results.push({ name: username, xp: xp, message: "Thành công!" });
+    results.push({ name: username, xp: xp, status: "Thành công!" });
 
   } catch (error) {
-    console.error("Lỗi Browser:", error);
-    // QUAN TRỌNG: In lỗi ra màn hình để đọc
-    return res.status(500).json({ 
-        error: "Lỗi Trình Duyệt", 
-        details: error.message,
-        stack: error.toString() 
+    console.error("Lỗi:", error);
+    // QUAN TRỌNG: Trả về lỗi chi tiết để đọc
+    return res.status(200).json({ 
+        Loi_Gap_Phai: "Co loi xay ra",
+        Noi_Dung: error.message,
+        Chi_Tiet: error.toString()
     });
   } finally {
     if (browser) await browser.close();
