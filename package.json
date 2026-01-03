@@ -1,8 +1,11 @@
 {
   "name": "curse-api",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
-    "puppeteer-core": "^21.5.2",
-    "@sparticuz/chromium": "^119.0.2"
+    "puppeteer-core": "^22.6.0",
+    "@sparticuz/chromium": "^123.0.0"
   }
 }
