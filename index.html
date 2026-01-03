@@ -3,382 +3,252 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Curse of Aros – Highscores</title>
+  <title>SuS Clan – XP Tracker</title>
   <style>
     :root{
-      --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#5aa9ff; --accent-2:#7ad3ff;
-      --border: #243054; --chip:#1b2542; --ok:#2ecc71; --warn:#f39c12;
+      --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#ff9800; --accent-2:#ffc107;
+      --border: #243054; --chip:#1b2542; --ok:#2ecc71; --warn:#f39c12; --err: #ff5252;
     }
     *{box-sizing:border-box}
     body{
       margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530);
-      color:var(--text); font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); font: 14px/1.5 system-ui, -apple-system, sans-serif;
       min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    .wrap{
-      width:min(1100px, 100%); display:grid; gap:16px;
-    }
-    .card{
-      background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35);
-      overflow:hidden;
-    }
-    header.card{
-      padding:16px 18px; display:grid; gap:12px;
-    }
-    .title{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px }
-    .title .dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(45deg, var(--accent), var(--accent-2)); box-shadow:0 0 12px var(--accent) }
-    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-    .controls .group{
-      display:flex; gap:8px; background:#0f1730; padding:8px; border:1px solid var(--border); border-radius:12px; align-items:center;
-    }
-    input[type="number"], input[type="text"], select{
-      background:#0c1430; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 10px; outline:none;
-    }
-    input[type="checkbox"]{ transform:translateY(1px) }
+    .wrap{ width:min(1100px, 100%); display:grid; gap:16px; }
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden; }
+    
+    header.card{ padding:16px 18px; display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+    .title{ display:flex; align-items:center; gap:10px; font-weight:700; font-size: 1.2em; color: var(--accent); }
+    
     button{
-      background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:12px; font-weight:700;
-      padding:8px 12px; cursor:pointer; transition:.2s transform;
+      background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:8px; font-weight:700;
+      padding:8px 16px; cursor:pointer; transition:.2s;
     }
-    button:hover{ transform:translateY(-1px) }
-    button.ghost{ background:#0f1730; color:var(--text); border:1px solid var(--border) }
+    button:hover{ transform:translateY(-1px); filter: brightness(1.1); }
+    button:disabled { opacity: 0.5; cursor: wait; }
 
     .table-wrap{ overflow:auto }
     table{ width:100%; border-collapse:separate; border-spacing:0 }
     thead th{
       position:sticky; top:0; background:rgba(15,23,48,.95); backdrop-filter: blur(6px);
-      text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer;
+      text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap;
     }
-    tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle }
+    tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle; }
     tr:hover td{ background:#0f1730 }
 
-    .name{
-      display:flex; align-items:center; gap:10px; font-weight:700;
+    .name{ font-weight:700; color: var(--accent-2); }
+    .mono{ font-family: ui-monospace, monospace; font-size: 1.1em; }
+    
+    /* Input Locked XP */
+    .locked-input {
+        background: #0a0f1f; border: 1px solid var(--border); color: var(--muted);
+        padding: 5px 10px; border-radius: 6px; width: 130px; text-align: right; font-family: monospace;
     }
-    .name .chip{
-      font-size:12px; color:var(--muted); background:var(--chip); padding:3px 8px; border-radius:999px; border:1px solid var(--border);
-    }
-    .muted{ color:var(--muted) }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
-    .lvl{ font-weight:700; background:#0f1730; border:1px solid var(--border); padding:4px 8px; border-radius:8px }
-    .xpbar{
-      height:8px; background:#0b1330; border:1px solid var(--border); border-radius:999px; overflow:hidden;
-      box-shadow: inset 0 0 10px rgba(0,0,0,.3);
-    }
-    .xpbar > i{ display:block; height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-2)) }
-    .footer{
-      display:flex; justify-content:space-between; align-items:center; padding:12px 16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border)
-    }
-    .status{ display:flex; align-items:center; gap:8px }
-    .status .dot{ width:8px; height:8px; border-radius:50% }
-    .ok{ background:var(--ok) } .warn{ background:var(--warn) }
-    .hidden{ display:none !important }
+    .locked-input:focus { border-color: var(--accent); color: #fff; outline: none; }
+
+    .plus { color: var(--ok); font-weight: bold; }
+    .neutral { color: var(--muted); }
     .center{ text-align:center; padding:24px }
-    .link{ color:var(--accent-2); text-decoration:none }
+    .hidden{ display:none !important }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="card">
-      <div class="title"><span class="dot"></span> <span>Curse of Aros – Highscores (Overall)</span></div>
-      <div class="controls">
-        <div class="group">
-          <label for="search">Tìm tên:</label>
-          <input id="search" type="text" placeholder="VD: Aros, GLORY..." />
-        </div>
-        <div class="group">
-          <label for="page">Trang (p):</label>
-          <input id="page" type="number" min="1" step="1" value="2" style="width:90px" />
-          <button id="btnPrev" class="ghost">&larr; Trước</button>
-          <button id="btnNext" class="ghost">Sau &rarr;</button>
-        </div>
-        <div class="group">
-          <label for="lw">lw =</label>
-          <select id="lw">
-            <option value="0" selected>0 (overall)</option>
-            <option value="1">1</option>
-          </select>
-        </div>
-        <button id="btnReload">Tải lại</button>
-        <a class="link" href="https://www.curseofaros.com/highscores-overall.json?p=2&lw=0" target="_blank" rel="noreferrer">Mở API</a>
+      <div class="title">🛡️ SuS Clan XP Tracker</div>
+      <div>
+        <button id="btnReload">Cập nhật dữ liệu</button>
       </div>
     </header>
 
-    <section class="card table-wrap" id="tableCard">
-      <div class="center" id="loading">Đang tải dữ liệu...</div>
-      <div class="center hidden" id="error">Không tải được dữ liệu. Hãy kiểm tra mạng hoặc CORS.</div>
-      <table id="table" class="hidden" aria-label="Highscores table">
+    <section class="card table-wrap">
+      <div class="center" id="loading">Đang kết nối tới server Curse of Aros...</div>
+      
+      <table id="table" class="hidden">
         <thead>
           <tr>
-            <th data-key="rank">#</th>
-            <th data-key="name">Người chơi</th>
-            <th data-key="xp" title="Tổng XP">XP</th>
-            <th data-key="locked_xp" title="Locked XP">Locked XP</th>
-            <th data-key="gained_xp" title="Gained XP">Gained XP</th>
-            <th data-key="total_level" title="Tổng level">Total Lv</th>
-            <th data-key="skills" title="Tổng số kỹ năng có XP">Kỹ năng</th>
+            <th>#</th>
+            <th>Thành Viên</th>
+            <th>Current XP (Hiện tại)</th>
+            <th>Locked XP (Mốc ban đầu)</th>
+            <th>Gained XP (Đã cày)</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </section>
 
-
-    <footer class="card footer">
-      <div class="status"><span class="dot ok" id="statusDot"></span><span id="statusText">Sẵn sàng</span></div>
-      <div>Tip: Click tiêu đề cột để sắp xếp. Gõ để lọc theo tên.</div>
+    <footer class="card" style="padding:12px 16px; font-size:12px; color:var(--muted); text-align: center;">
+      Dữ liệu Locked XP đã được thiết lập sẵn theo danh sách.
     </footer>
   </div>
 
  <script>
-    const API_BASE = 'https://www.curseofaros.com/highscores-overall.json';
+    // --- DANH SÁCH THÀNH VIÊN VÀ XP KHỞI ĐIỂM ---
+    // Tôi đã chuyển đổi danh sách của bạn thành code ở đây
+    const CLAN_DATA = [
+        { name: "SuS TraDaVN", start: 45361534920 },
+        { name: "SuS Zet DiY", start: 39084720587 },
+        { name: "SuS Dominate", start: 38450414228 },
+        { name: "SuS QuangTong", start: 35569912243 },
+        { name: "SuS t autumn t", start: 26753499820 },
+        { name: "SuS Karma", start: 32822171477 },
+        { name: "SuS tienma", start: 18232356437 },
+        { name: "SuS Daedra", start: 11805772350 },
+        { name: "SuS GuarDian", start: 16929364157 },
+        { name: "SuS Yoshe DiY", start: 6342424017 },
+        { name: "SuS Nightly", start: 7313042667 },
+        { name: "SuS Hung buda", start: 4883952202 },
+        { name: "SuS Axolotl", start: 8345765571 },
+        { name: "SuS D3fault", start: 4009205331 },
+        { name: "SuS Skill", start: 5604750109 },
+        { name: "SuS Merlon", start: 4349818322 },
+        { name: "SuS MicaelQuan", start: 4788178973 },
+        { name: "SuS Eupto", start: 3066982450 },
+        { name: "SuS UnknownX", start: 3942788125 },
+        { name: "SuS Bobross", start: 5216233384 },
+        { name: "SuS HibikiVN", start: 1586069982 },
+        { name: "SuS Zeta", start: 1772622138 },
+        { name: "SuS HuyKhoi VN", start: 4251076795 },
+        { name: "SuS Maxmillnos", start: 2251216584 },
+        { name: "SuS J97 Bo Con", start: 2622015974 },
+        { name: "SuS Bun Cha VN", start: 1724494062 },
+        { name: "SuS GoG1t0", start: 2363285870 },
+        { name: "SuS Naow", start: 2699422340 },
+        { name: "SuS DuyKhanh", start: 2629377805 },
+        { name: "SuS VuSua VN", start: 1712168220 },
+        { name: "SuS SHIELDHERO", start: 1311790623 },
+        { name: "SuS lucky", start: 2680717114 },
+        { name: "SuS Uruneeshi", start: 1496485944 },
+        { name: "SuS NoSlackSky", start: 1600803318 },
+        { name: "SuS mehdipro", start: 1719139440 },
+        { name: "SuS TraDao VN", start: 1678100063 },
+        { name: "SuS SadSaiki", start: 719832247 }
+    ];
+    // -------------------------------------
+
     const els = {
-      page: document.getElementById('page'),
-      lw: document.getElementById('lw'),
-      search: document.getElementById('search'),
-      btnPrev: document.getElementById('btnPrev'),
-      btnNext: document.getElementById('btnNext'),
       btnReload: document.getElementById('btnReload'),
-      statusDot: document.getElementById('statusDot'),
-      statusText: document.getElementById('statusText'),
       loading: document.getElementById('loading'),
-      error: document.getElementById('error'),
       table: document.getElementById('table'),
       tbody: document.getElementById('tbody'),
-      thead: document.querySelector('#table thead'),
     };
 
-    let rawData = [];
-    let viewData = [];
-    let sort = { key: 'xp', dir: 'desc' };
-
     function fmtNumber(n){
-      try{ return Number(n).toLocaleString('en-US'); }catch{ return n; }
-    }
-
-    function setStatus(ok=true, text=''){
-      els.statusDot.className = 'dot ' + (ok ? 'ok' : 'warn');
-      els.statusText.textContent = text || (ok ? 'Sẵn sàng' : 'Có lỗi xảy ra');
-    }
-    function setLoading(isLoading){
-      els.loading.classList.toggle('hidden', !isLoading);
-      els.table.classList.toggle('hidden', isLoading);
-      els.error.classList.add('hidden');
-      setStatus(isLoading, isLoading ? 'Đang tải dữ liệu...' : 'Sẵn sàng');
-    }
-    function setError(msg){
-      els.error.textContent = msg || 'Không tải được dữ liệu.';
-      els.error.classList.remove('hidden');
-      els.table.classList.add('hidden');
-      els.loading.classList.add('hidden');
-      setStatus(false, msg || 'Lỗi tải dữ liệu');
-    }
-
-    function buildUrl(){
-      const p = Math.max(1, parseInt(els.page.value || '1', 10));
-      const lw = parseInt(els.lw.value || '0', 10);
-      return `${API_BASE}?p=${encodeURIComponent(p)}&lw=${encodeURIComponent(lw)}`;
+      return Number(n).toLocaleString('en-US');
     }
 
     async function fetchData(){
-      setLoading(true);
+      els.loading.classList.remove('hidden');
+      els.table.classList.add('hidden');
+      els.btnReload.disabled = true;
+      els.btnReload.innerText = "Đang tải...";
+
       try{
-        const url = buildUrl();
-        const res = await fetch(url, { cache: 'no-store' });
-        if(!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        if(!Array.isArray(json)) throw new Error('Dữ liệu trả về không phải mảng.');
-        rawData = json.map((d, i) => ({
-          rank: i + 1,
-          name: d.name,
-          name_color: d.name_color,
-          xp: d.xp,
-          total_level: d.total_level,
-          xps: d.xps || [],
-          locked_xp: 0, // thêm mặc định
-          get gained_xp(){ return (this.xp || 0) - (this.locked_xp || 0); }
-        }));
-        applyFiltersAndRender();
-        setLoading(false);
-        setStatus(true, `Đã tải ${rawData.length} dòng từ ${new URL(buildUrl()).href}`);
-      }catch(err){
+        // Lấy danh sách tên để gửi API
+        const nameList = CLAN_DATA.map(m => encodeURIComponent(m.name)).join(',');
+
+        // Gọi API Backend
+        const res = await fetch(`/api/track?users=${nameList}`);
+        if(!res.ok) throw new Error('Lỗi kết nối API');
+        
+        const apiData = await res.json();
+        
+        // Hợp nhất dữ liệu API với dữ liệu Start XP của Clan
+        const mergedData = CLAN_DATA.map(member => {
+            // Tìm kết quả từ API tương ứng với tên
+            const apiResult = apiData.find(d => d.name === member.name) || { xp: 0, found: false };
+            return {
+                ...member, // Giữ lại start xp
+                currentXP: apiResult.xp,
+                found: apiResult.found
+            };
+        });
+        
+        // Sắp xếp theo Gained XP (Ai cày nhiều nhất lên đầu)
+        // Nếu muốn xếp theo Tổng XP thì đổi thành b.currentXP - a.currentXP
+        mergedData.sort((a, b) => {
+            const gainedA = a.currentXP - (getStoredLocked(a.name) || a.start);
+            const gainedB = b.currentXP - (getStoredLocked(b.name) || b.start);
+            return gainedB - gainedA;
+        });
+
+        renderTable(mergedData);
+
+      } catch(err){
         console.error(err);
-        setError('Không tải được dữ liệu. Chi tiết: ' + err.message);
+        els.loading.textContent = 'Lỗi: ' + err.message;
+      } finally {
+        els.loading.classList.add('hidden');
+        els.table.classList.remove('hidden');
+        els.btnReload.disabled = false;
+        els.btnReload.innerText = "Cập nhật dữ liệu";
       }
     }
 
-    function applyFiltersAndRender(){
-      const q = (els.search.value || '').trim().toLowerCase();
-      viewData = rawData.filter(row => !q || (row.name || '').toLowerCase().includes(q));
-      sortData();
-      renderTable();
+    // Hàm lấy Locked XP: Ưu tiên LocalStorage > Mặc định trong code
+    function getStoredLocked(name){
+        const stored = localStorage.getItem(`locked_xp_${name}`);
+        return stored ? parseInt(stored) : null;
     }
 
-    function sortData(){
-      const { key, dir } = sort;
-      const mul = dir === 'asc' ? 1 : -1;
-      viewData.sort((a,b)=>{
-        const av = key === 'skills' ? (a.xps?.filter(x=>x>0).length||0) : a[key];
-        const bv = key === 'skills' ? (b.xps?.filter(x=>x>0).length||0) : b[key];
-        if (typeof av === 'string' && typeof bv === 'string'){
-          return av.localeCompare(bv) * mul;
-        }
-        return ((av ?? 0) - (bv ?? 0)) * mul;
+    function renderTable(data){
+      els.tbody.innerHTML = '';
+      
+      data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        
+        // Logic chọn Locked XP:
+        // 1. Nếu người dùng đã từng sửa tay trên web -> Lấy số đã sửa (trong LocalStorage)
+        // 2. Nếu chưa sửa gì cả -> Lấy số mặc định bạn cung cấp (row.start)
+        let lockedVal = getStoredLocked(row.name);
+        if (lockedVal === null) lockedVal = row.start;
+
+        const currentXP = row.currentXP;
+        const gainedXP = currentXP - lockedVal;
+
+        // Tạo nội dung HTML
+        tr.innerHTML = `
+            <td class="muted">${index + 1}</td>
+            <td class="name">${row.name}</td>
+            <td class="mono" style="color:#fff">${fmtNumber(currentXP)}</td>
+            <td>
+                <input type="number" 
+                       class="locked-input" 
+                       value="${lockedVal}" 
+                       onchange="window.updateRow('${row.name}', ${currentXP}, this.value, 'gained_${index}')"
+                       onclick="this.select()"
+                />
+            </td>
+            <td class="mono ${gainedXP > 0 ? 'plus' : 'neutral'}" id="gained_${index}">
+                ${gainedXP > 0 ? '+' : ''}${fmtNumber(gainedXP)}
+            </td>
+        `;
+
+        els.tbody.appendChild(tr);
       });
     }
 
-    function setSort(key){
-      if (sort.key === key){
-        sort.dir = (sort.dir === 'asc') ? 'desc' : 'asc';
-      } else {
-        sort.key = key;
-        sort.dir = (key === 'name' || key === 'rank') ? 'asc' : 'desc';
-      }
-      applyFiltersAndRender();
-      document.querySelectorAll('thead th').forEach(th=>{
-        const k = th.dataset.key;
-        if(!k){ th.textContent = th.textContent; return; }
-        th.innerHTML = th.textContent.replace(/[▲▼]/g,'') + (k===sort.key ? (sort.dir==='asc'?' ▲':' ▼') : '');
-      });
-    }
+    // Hàm cập nhật khi người dùng nhập tay số mới
+    window.updateRow = function(name, currentXP, newLockedVal, gainedId) {
+        const lockedVal = parseInt(newLockedVal) || 0;
+        
+        // Lưu số mới vào trình duyệt
+        localStorage.setItem(`locked_xp_${name}`, lockedVal);
 
-function renderTable(){
-  const tbody = els.tbody;
-  tbody.innerHTML = '';
-  if(viewData.length === 0){
-    tbody.innerHTML = `<tr><td colspan="7" class="center muted">Không có dữ liệu phù hợp.</td></tr>`;
-    return;
-  }
-  const maxXp = Math.max(...viewData.map(r=>r.xp||0), 1);
-  const frag = document.createDocumentFragment();
-  viewData.forEach(row=>{
-    const tr = document.createElement('tr');
-
-    // Rank
-    const tdRank = document.createElement('td');
-    tdRank.className = 'mono muted';
-    tdRank.textContent = row.rank;
-    tr.appendChild(tdRank);
-
-    // Name
-    const tdName = document.createElement('td');
-    tdName.className = 'name';
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = row.name || '(unknown)';
-    if (row.name_color){
-      nameSpan.style.color = `#${row.name_color}`;
-    }
-    const chip = document.createElement('span');
-    const skillCount = row.xps?.filter(x=>x>0).length || 0;
-    chip.className = 'chip';
-    chip.title = `${skillCount} kỹ năng có XP > 0`;
-    chip.textContent = `${skillCount} skills`;
-    tdName.appendChild(nameSpan);
-    tdName.appendChild(chip);
-    tr.appendChild(tdName);
-
-    // XP
-    const tdXp = document.createElement('td');
-    const xpTop = document.createElement('div');
-    xpTop.className = 'mono';
-    xpTop.textContent = fmtNumber(row.xp);
-    const bar = document.createElement('div');
-    bar.className = 'xpbar'; const fill = document.createElement('i');
-    fill.style.width = Math.max(2, Math.round((row.xp/maxXp)*100)) + '%';
-    bar.appendChild(fill);
-    tdXp.appendChild(xpTop); tdXp.appendChild(bar);
-    tr.appendChild(tdXp);
-
-    // Locked XP (editable)
-    const tdLocked = document.createElement('td');
-    tdLocked.className = 'mono';
-    const lockedSpan = document.createElement('span');
-    lockedSpan.textContent = fmtNumber(row.locked_xp || 0);
-
-    const lockedInput = document.createElement('input');
-    lockedInput.type = 'number';
-    lockedInput.value = row.locked_xp || 0;
-    lockedInput.style.display = 'none';
-    lockedInput.style.width = '100px';
-
-    const btnEdit = document.createElement('button');
-    btnEdit.className = 'ghost';
-    btnEdit.textContent = 'Edit';
-
-    btnEdit.addEventListener('click', ()=>{
-      if (btnEdit.textContent === 'Edit'){
-        lockedSpan.style.display = 'none';
-        lockedInput.style.display = 'inline-block';
-        btnEdit.textContent = 'Save';
-      } else {
-        const newVal = parseInt(lockedInput.value || '0', 10);
-        row.locked_xp = newVal;
-        lockedSpan.textContent = fmtNumber(newVal);
-        lockedSpan.style.display = 'inline';
-        lockedInput.style.display = 'none';
-        btnEdit.textContent = 'Edit';
-        // cập nhật lại Gained XP
-        tdGained.textContent = fmtNumber(row.gained_xp || 0);
-      }
-    });
-
-    tdLocked.appendChild(lockedSpan);
-    tdLocked.appendChild(lockedInput);
-    tdLocked.appendChild(btnEdit);
-    tr.appendChild(tdLocked);
-
-    // Gained XP
-    const tdGained = document.createElement('td');
-    tdGained.className = 'mono';
-    tdGained.textContent = fmtNumber(row.gained_xp || 0);
-    tr.appendChild(tdGained);
-
-    // Total Level
-    const tdLv = document.createElement('td');
-    tdLv.innerHTML = `<span class="lvl">${fmtNumber(row.total_level)}</span>`;
-    tr.appendChild(tdLv);
-
-    // Skills detail
-    const tdSkills = document.createElement('td');
-    const btn = document.createElement('button');
-    btn.className = 'ghost';
-    btn.textContent = 'Chi tiết';
-    const detail = document.createElement('div');
-    detail.className = 'muted mono';
-    detail.style.marginTop = '6px';
-    detail.style.display = 'none';
-    const arr = (row.xps || []).map((v,i)=>`S${i+1}:${fmtNumber(v)}`).join(' · ');
-    detail.textContent = arr || '—';
-    btn.addEventListener('click', ()=>{
-      detail.style.display = detail.style.display==='none' ? 'block' : 'none';
-    });
-    tdSkills.appendChild(btn);
-    tdSkills.appendChild(detail);
-    tr.appendChild(tdSkills);
-
-    frag.appendChild(tr);
-  });
-  tbody.appendChild(frag);
-}
-
+        // Tính lại hiển thị
+        const gained = currentXP - lockedVal;
+        const gainedEl = document.getElementById(gainedId);
+        
+        gainedEl.innerText = (gained > 0 ? "+" : "") + fmtNumber(gained);
+        
+        // Đổi màu
+        if(gained > 0) gainedEl.className = "mono plus";
+        else gainedEl.className = "mono neutral";
+    };
 
     els.btnReload.addEventListener('click', fetchData);
-    els.btnPrev.addEventListener('click', ()=>{
-      const cur = Math.max(1, parseInt(els.page.value || '1', 10));
-      if(cur > 1){ els.page.value = String(cur - 1); fetchData(); }
-    });
-    els.btnNext.addEventListener('click', ()=>{
-      const cur = Math.max(1, parseInt(els.page.value || '1', 10));
-      els.page.value = String(cur + 1); fetchData();
-    });
-    els.page.addEventListener('change', fetchData);
-    els.lw.addEventListener('change', fetchData);
-    els.search.addEventListener('input', ()=> applyFiltersAndRender());
-    els.thead.addEventListener('click', (e)=>{
-      const th = e.target.closest('th');
-      if(!th || !th.dataset.key) return;
-      setSort(th.dataset.key);
-    });
-
     fetchData();
   </script>
 </body>
