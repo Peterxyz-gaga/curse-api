@@ -5,48 +5,22 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SuS Clan – XP Tracker</title>
   <style>
-    :root{
-      --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#ff9800; --accent-2:#ffc107;
-      --border: #243054; --chip:#1b2542; --ok:#2ecc71; --warn:#f39c12; --err: #ff5252;
-    }
+    :root{ --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#ff9800; --accent-2:#ffc107; --border: #243054; --ok:#2ecc71; }
     *{box-sizing:border-box}
-    body{
-      margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530);
-      color:var(--text); font: 14px/1.5 system-ui, -apple-system, sans-serif;
-      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
-    }
+    body{ margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530); color:var(--text); font: 14px/1.5 system-ui, sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
     .wrap{ width:min(1100px, 100%); display:grid; gap:16px; }
     .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden; }
-    
     header.card{ padding:16px 18px; display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
-    .title{ display:flex; align-items:center; gap:10px; font-weight:700; font-size: 1.2em; color: var(--accent); }
-    
-    button{
-      background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:8px; font-weight:700;
-      padding:8px 16px; cursor:pointer; transition:.2s;
-    }
-    button:hover{ transform:translateY(-1px); filter: brightness(1.1); }
+    .title{ font-weight:700; font-size: 1.2em; color: var(--accent); }
+    button{ background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:8px; font-weight:700; padding:8px 16px; cursor:pointer; }
     button:disabled { opacity: 0.5; cursor: wait; }
-
     .table-wrap{ overflow:auto }
     table{ width:100%; border-collapse:separate; border-spacing:0 }
-    thead th{
-      position:sticky; top:0; background:rgba(15,23,48,.95); backdrop-filter: blur(6px);
-      text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap;
-    }
+    thead th{ position:sticky; top:0; background:rgba(15,23,48,.95); text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap; }
     tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle; }
-    tr:hover td{ background:#0f1730 }
-
     .name{ font-weight:700; color: var(--accent-2); }
     .mono{ font-family: ui-monospace, monospace; font-size: 1.1em; }
-    
-    /* Input Locked XP */
-    .locked-input {
-        background: #0a0f1f; border: 1px solid var(--border); color: var(--muted);
-        padding: 5px 10px; border-radius: 6px; width: 130px; text-align: right; font-family: monospace;
-    }
-    .locked-input:focus { border-color: var(--accent); color: #fff; outline: none; }
-
+    .locked-input { background: #0a0f1f; border: 1px solid var(--border); color: var(--muted); padding: 5px 10px; border-radius: 6px; width: 130px; text-align: right; font-family: monospace; }
     .plus { color: var(--ok); font-weight: bold; }
     .neutral { color: var(--muted); }
     .center{ text-align:center; padding:24px }
@@ -57,184 +31,72 @@
   <div class="wrap">
     <header class="card">
       <div class="title">🛡️ SuS Clan XP Tracker</div>
-      <div>
-        <button id="btnReload">Cập nhật dữ liệu</button>
-      </div>
+      <button id="btnReload">Cập nhật dữ liệu</button>
     </header>
-
     <section class="card table-wrap">
-      <div class="center" id="loading">Đang kết nối tới server Curse of Aros...</div>
-      
+      <div class="center" id="loading">Đang kết nối...</div>
       <table id="table" class="hidden">
         <thead>
-          <tr>
-            <th>#</th>
-            <th>Thành Viên</th>
-            <th>Current XP (Hiện tại)</th>
-            <th>Locked XP (Mốc ban đầu)</th>
-            <th>Gained XP (Đã cày)</th>
-          </tr>
+          <tr><th>#</th><th>Thành Viên</th><th>Current XP</th><th>Locked XP</th><th>Gained XP</th></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </section>
-
-    <footer class="card" style="padding:12px 16px; font-size:12px; color:var(--muted); text-align: center;">
-      Dữ liệu Locked XP đã được thiết lập sẵn theo danh sách.
-    </footer>
   </div>
 
  <script>
-    // --- DANH SÁCH THÀNH VIÊN VÀ XP KHỞI ĐIỂM ---
     const CLAN_DATA = [
-        { name: "SuS TraDaVN", start: 45361534920 },
-        { name: "SuS Zet DiY", start: 39084720587 },
-        { name: "SuS Dominate", start: 38450414228 },
-        { name: "SuS QuangTong", start: 35569912243 },
-        { name: "SuS t autumn t", start: 26753499820 },
-        { name: "SuS Karma", start: 32822171477 },
-        { name: "SuS tienma", start: 18232356437 },
-        { name: "SuS Daedra", start: 11805772350 },
-        { name: "SuS GuarDian", start: 16929364157 },
-        { name: "SuS Yoshe DiY", start: 6342424017 },
-        { name: "SuS Nightly", start: 7313042667 },
-        { name: "SuS Hung buda", start: 4883952202 },
-        { name: "SuS Axolotl", start: 8345765571 },
-        { name: "SuS D3fault", start: 4009205331 },
-        { name: "SuS Skill", start: 5604750109 },
-        { name: "SuS Merlon", start: 4349818322 },
-        { name: "SuS MicaelQuan", start: 4788178973 },
-        { name: "SuS Eupto", start: 3066982450 },
-        { name: "SuS UnknownX", start: 3942788125 },
-        { name: "SuS Bobross", start: 5216233384 },
-        { name: "SuS HibikiVN", start: 1586069982 },
-        { name: "SuS Zeta", start: 1772622138 },
-        { name: "SuS HuyKhoi VN", start: 4251076795 },
-        { name: "SuS Maxmillnos", start: 2251216584 },
-        { name: "SuS J97 Bo Con", start: 2622015974 },
-        { name: "SuS Bun Cha VN", start: 1724494062 },
-        { name: "SuS GoG1t0", start: 2363285870 },
-        { name: "SuS Naow", start: 2699422340 },
-        { name: "SuS DuyKhanh", start: 2629377805 },
-        { name: "SuS VuSua VN", start: 1712168220 },
-        { name: "SuS SHIELDHERO", start: 1311790623 },
-        { name: "SuS lucky", start: 2680717114 },
-        { name: "SuS Uruneeshi", start: 1496485944 },
-        { name: "SuS NoSlackSky", start: 1600803318 },
-        { name: "SuS mehdipro", start: 1719139440 },
-        { name: "SuS TraDao VN", start: 1678100063 },
+        { name: "SuS TraDaVN", start: 45361534920 }, { name: "SuS Zet DiY", start: 39084720587 }, { name: "SuS Dominate", start: 38450414228 },
+        { name: "SuS QuangTong", start: 35569912243 }, { name: "SuS t autumn t", start: 26753499820 }, { name: "SuS Karma", start: 32822171477 },
+        { name: "SuS tienma", start: 18232356437 }, { name: "SuS Daedra", start: 11805772350 }, { name: "SuS GuarDian", start: 16929364157 },
+        { name: "SuS Yoshe DiY", start: 6342424017 }, { name: "SuS Nightly", start: 7313042667 }, { name: "SuS Hung buda", start: 4883952202 },
+        { name: "SuS Axolotl", start: 8345765571 }, { name: "SuS D3fault", start: 4009205331 }, { name: "SuS Skill", start: 5604750109 },
+        { name: "SuS Merlon", start: 4349818322 }, { name: "SuS MicaelQuan", start: 4788178973 }, { name: "SuS Eupto", start: 3066982450 },
+        { name: "SuS UnknownX", start: 3942788125 }, { name: "SuS Bobross", start: 5216233384 }, { name: "SuS HibikiVN", start: 1586069982 },
+        { name: "SuS Zeta", start: 1772622138 }, { name: "SuS HuyKhoi VN", start: 4251076795 }, { name: "SuS Maxmillnos", start: 2251216584 },
+        { name: "SuS J97 Bo Con", start: 2622015974 }, { name: "SuS Bun Cha VN", start: 1724494062 }, { name: "SuS GoG1t0", start: 2363285870 },
+        { name: "SuS Naow", start: 2699422340 }, { name: "SuS DuyKhanh", start: 2629377805 }, { name: "SuS VuSua VN", start: 1712168220 },
+        { name: "SuS SHIELDHERO", start: 1311790623 }, { name: "SuS lucky", start: 2680717114 }, { name: "SuS Uruneeshi", start: 1496485944 },
+        { name: "SuS NoSlackSky", start: 1600803318 }, { name: "SuS mehdipro", start: 1719139440 }, { name: "SuS TraDao VN", start: 1678100063 },
         { name: "SuS SadSaiki", start: 719832247 }
     ];
-    // -------------------------------------
 
-    const els = {
-      btnReload: document.getElementById('btnReload'),
-      loading: document.getElementById('loading'),
-      table: document.getElementById('table'),
-      tbody: document.getElementById('tbody'),
-    };
+    const els = { btn: document.getElementById('btnReload'), load: document.getElementById('loading'), table: document.getElementById('table'), tbody: document.getElementById('tbody') };
+    const fmt = n => Number(n).toLocaleString('en-US');
+    const getLock = n => parseInt(localStorage.getItem(`locked_${n}`)) || null;
 
-    function fmtNumber(n){
-      return Number(n).toLocaleString('en-US');
-    }
-
-    async function fetchData(){
-      els.loading.classList.remove('hidden');
-      els.table.classList.add('hidden');
-      els.btnReload.disabled = true;
-      els.btnReload.innerText = "Đang tải...";
-
-      try{
-        const nameList = CLAN_DATA.map(m => encodeURIComponent(m.name)).join(',');
-
-        // --- GỌI API TỪ SERVER VERCEL MỚI ---
-        const res = await fetch(`https://curse-api.vercel.app/api/track?users=${nameList}`);
-        
-        if(!res.ok) throw new Error('Lỗi kết nối API');
-        
-        const apiData = await res.json();
-        
-        const mergedData = CLAN_DATA.map(member => {
-            const apiResult = apiData.find(d => d.name === member.name) || { xp: 0, found: false };
-            return {
-                ...member, 
-                currentXP: apiResult.xp,
-                found: apiResult.found
-            };
+    function render(){
+        els.tbody.innerHTML = '';
+        const sorted = [...CLAN_DATA].sort((a,b) => ((b.curr||0) - (getLock(b.name)||b.start)) - ((a.curr||0) - (getLock(a.name)||a.start)));
+        sorted.forEach((r,i) => {
+            const lock = getLock(r.name) || r.start;
+            const cur = r.curr || r.start; 
+            const gain = cur - lock;
+            els.tbody.innerHTML += `<tr>
+                <td class="muted">${i+1}</td><td class="name">${r.name} ${r.curr?'✅':'⏳'}</td><td class="mono" style="color:#fff">${fmt(cur)}</td>
+                <td><input type="number" class="locked-input" value="${lock}" onchange="localStorage.setItem('locked_${r.name}',this.value);render()" onclick="this.select()"></td>
+                <td class="mono ${gain>0?'plus':'neutral'}">${gain>0?'+':''}${fmt(gain)}</td>
+            </tr>`;
         });
-        
-        mergedData.sort((a, b) => {
-            const gainedA = a.currentXP - (getStoredLocked(a.name) || a.start);
-            const gainedB = b.currentXP - (getStoredLocked(b.name) || b.start);
-            return gainedB - gainedA;
-        });
-
-        renderTable(mergedData);
-
-      } catch(err){
-        console.error(err);
-        els.loading.textContent = 'Lỗi: ' + err.message;
-      } finally {
-        els.loading.classList.add('hidden');
-        els.table.classList.remove('hidden');
-        els.btnReload.disabled = false;
-        els.btnReload.innerText = "Cập nhật dữ liệu";
-      }
     }
 
-    function getStoredLocked(name){
-        const stored = localStorage.getItem(`locked_xp_${name}`);
-        return stored ? parseInt(stored) : null;
+    async function fetchAll(){
+        els.load.classList.remove('hidden'); els.table.classList.remove('hidden'); els.btn.disabled=true; render();
+        // CHIA NHỎ: Mỗi lần tải 5 người
+        for(let i=0; i<CLAN_DATA.length; i+=5){
+            const group = CLAN_DATA.slice(i, i+5).map(m=>encodeURIComponent(m.name)).join(',');
+            els.load.innerText = `Đang tải nhóm ${Math.ceil(i/5)+1}...`;
+            try {
+                const res = await fetch(`https://curse-api.vercel.app/api/track?users=${group}`);
+                (await res.json()).forEach(d => { const m=CLAN_DATA.find(x=>x.name===d.name); if(m) m.curr=d.xp; });
+                render();
+            } catch(e){ console.log(e); }
+        }
+        els.load.classList.add('hidden'); els.btn.disabled=false; els.btn.innerText="Cập nhật dữ liệu";
     }
 
-    function renderTable(data){
-      els.tbody.innerHTML = '';
-      
-      data.forEach((row, index) => {
-        const tr = document.createElement('tr');
-        
-        let lockedVal = getStoredLocked(row.name);
-        if (lockedVal === null) lockedVal = row.start;
-
-        const currentXP = row.currentXP;
-        const gainedXP = currentXP - lockedVal;
-
-        tr.innerHTML = `
-            <td class="muted">${index + 1}</td>
-            <td class="name">${row.name}</td>
-            <td class="mono" style="color:#fff">${fmtNumber(currentXP)}</td>
-            <td>
-                <input type="number" 
-                       class="locked-input" 
-                       value="${lockedVal}" 
-                       onchange="window.updateRow('${row.name}', ${currentXP}, this.value, 'gained_${index}')"
-                       onclick="this.select()"
-                />
-            </td>
-            <td class="mono ${gainedXP > 0 ? 'plus' : 'neutral'}" id="gained_${index}">
-                ${gainedXP > 0 ? '+' : ''}${fmtNumber(gainedXP)}
-            </td>
-        `;
-
-        els.tbody.appendChild(tr);
-      });
-    }
-
-    window.updateRow = function(name, currentXP, newLockedVal, gainedId) {
-        const lockedVal = parseInt(newLockedVal) || 0;
-        localStorage.setItem(`locked_xp_${name}`, lockedVal);
-
-        const gained = currentXP - lockedVal;
-        const gainedEl = document.getElementById(gainedId);
-        
-        gainedEl.innerText = (gained > 0 ? "+" : "") + fmtNumber(gained);
-        
-        if(gained > 0) gainedEl.className = "mono plus";
-        else gainedEl.className = "mono neutral";
-    };
-
-    els.btnReload.addEventListener('click', fetchData);
-    fetchData();
+    els.btn.onclick = fetchAll;
+    fetchAll();
   </script>
 </body>
 </html>
