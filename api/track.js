@@ -1,59 +1,77 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
 module.exports = async (req, res) => {
   const { users } = req.query;
+  // Nếu không có user thì trả về rỗng ngay
   if (!users) return res.status(200).json([]);
 
   const userList = users.split(',');
   const results = [];
+  let browser = null;
 
-  await Promise.all(userList.map(async (rawName) => {
-    const username = decodeURIComponent(rawName).trim();
+  try {
+    // 1. Khởi động trình duyệt Chrome ảo
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
+
+    // 2. Mở tab mới
+    const page = await browser.newPage();
     
-    try {
+    // Giả làm người dùng thật
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36');
+
+    // 3. Duyệt qua từng người trong danh sách
+    // Lưu ý: Vercel Free giới hạn 10 giây, nếu danh sách dài quá có thể bị ngắt giữa chừng
+    for (const rawName of userList) {
+      const username = decodeURIComponent(rawName).trim();
       const url = `https://www.curseofaros.com/highscores-personal?user=${encodeURIComponent(username)}`;
-      
-      // GIẢ LẬP TRÌNH DUYỆT THẬT KỸ CÀNG
-      const response = await axios.get(url, {
-        headers: { 
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Referer': 'https://www.curseofaros.com/',
-          'Connection': 'keep-alive'
-        },
-        timeout: 10000 // Tăng thời gian chờ lên 10s
-      });
-      
-      const $ = cheerio.load(response.data);
-      let xp = 0;
-      let found = false;
 
-      // Kiểm tra xem có bị chặn bởi Cloudflare không
-      const pageTitle = $('title').text();
-      console.log(`Kiểm tra ${username} - Tiêu đề trang: ${pageTitle}`);
+      try {
+        // Vào trang và chờ trang load xong (tối đa 5 giây mỗi người)
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 5000 });
 
-      $('tr').each((i, el) => {
-        const rowText = $(el).text();
-        if (rowText.includes('Overall')) {
-           const tds = $(el).find('td');
-           let xpText = tds.eq(3).text().trim(); 
-           if (!xpText.match(/^\d/)) xpText = tds.eq(2).text().trim();
+        // Chạy code Javascript ngay trên trang đó để lấy XP
+        const xp = await page.evaluate(() => {
+          // Tìm dòng chứa "Overall"
+          const rows = Array.from(document.querySelectorAll('tr'));
+          for (const row of rows) {
+            if (row.innerText.includes('Overall')) {
+              const cells = row.querySelectorAll('td');
+              // Lấy cột 4 (hoặc 3)
+              let text = cells[3]?.innerText || cells[2]?.innerText || '0';
+              // Xóa dấu phẩy và chuyển thành số
+              return parseInt(text.replace(/,/g, '')) || 0;
+            }
+          }
+          return 0; 
+        });
 
-           xp = parseInt(xpText.replace(/,/g, '')) || 0;
-           found = true;
-        }
-      });
+        results.push({ name: username, xp: xp, found: xp > 0 });
 
-      results.push({ name: username, xp: xp, found: found });
-
-    } catch (error) {
-      console.error(`Lỗi kết nối ${username}:`, error.message);
-      results.push({ name: username, xp: 0, found: false });
+      } catch (e) {
+        console.error(`Lỗi tải ${username}: ${e.message}`);
+        results.push({ name: username, xp: 0, found: false });
+      }
     }
-  }));
 
+  } catch (error) {
+    console.error("Lỗi Browser:", error);
+    // Nếu lỗi nặng thì trả về kết quả rỗng thay vì báo lỗi 500
+    return res.status(200).json([]);
+  } finally {
+    // 4. Đóng trình duyệt để giải phóng RAM
+    if (browser) {
+      await browser.close();
+    }
+  }
+
+  // Sắp xếp và trả kết quả
   results.sort((a, b) => b.xp - a.xp);
   res.status(200).json(results);
 };
