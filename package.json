@@ -2,8 +2,8 @@
   "name": "curse-api",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer-core": "^23.10.0",
-    "@sparticuz/chromium": "^131.0.0"
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0"
   },
   "engines": {
     "node": "20.x"
