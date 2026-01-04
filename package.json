@@ -1,11 +1,9 @@
 {
   "name": "curse-api",
   "version": "1.0.0",
-  "description": "API Scraper for Curse of Aros",
-  "main": "api/track.js",
   "dependencies": {
-    "puppeteer-core": "^22.12.1",
-    "@sparticuz/chromium-min": "^126.0.0"
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12"
   },
   "engines": {
     "node": "20.x"
