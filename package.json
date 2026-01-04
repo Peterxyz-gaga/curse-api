@@ -4,10 +4,10 @@
   "description": "API Scraper for Curse of Aros",
   "main": "api/track.js",
   "dependencies": {
-    "puppeteer-core": "^22.6.0",
-    "@sparticuz/chromium-min": "^123.0.0"
+    "puppeteer-core": "^22.12.1",
+    "@sparticuz/chromium-min": "^126.0.0"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   }
 }
