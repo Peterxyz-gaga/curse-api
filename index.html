@@ -4,27 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuS XP Race - Leaderboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CẤU HÌNH GIAO DIỆN --- */
+        /* --- CẤU HÌNH --- */
         :root {
-            --primary-color: #00f2ff; /* Màu xanh Neon */
-            --sus-red: #ff003c;       /* MÀU ĐỎ NEON CHO SUS (Mới) */
-            --bg-dark: #09090b;       /* Nền đen sâu */
-            --glass-bg: rgba(22, 27, 34, 0.7); /* Màu kính mờ */
+            --primary-color: #00f2ff; /* Xanh Neon */
+            --sus-red: #ff003c;       /* Đỏ Neon */
+            --bg-dark: #09090b;       /* Đen */
+            --glass-bg: rgba(22, 27, 34, 0.7);
             --border-color: rgba(255, 255, 255, 0.1);
             --gold: #ffd700;
-            --silver: #c0c0c0;
-            --bronze: #cd7f32;
         }
 
         body {
             background-color: var(--bg-dark);
-            /* Hình nền mờ ảo (Thêm chút sắc đỏ vào nền cho hợp tông) */
+            /* Nền tối pha chút ánh đỏ và xanh */
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(255, 0, 60, 0.08) 0%, transparent 40%);
+                radial-gradient(circle at 50% 10%, rgba(255, 0, 60, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(0, 242, 255, 0.05) 0%, transparent 40%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
@@ -32,42 +30,51 @@
             text-align: center;
             min-height: 100vh;
         }
-        
-        /* Tiêu đề chính */
-        h1 {
-            font-size: 3.5em; /* To hơn một chút */
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            /* Xóa màu và animation chung, để set riêng cho từng phần */
+
+        /* --- LOGO CONTAINER --- */
+        .logo-section {
+            margin-bottom: 40px;
         }
 
-        /* --- STYLE RIÊNG CHO CHỮ "SuS" (ĐỎ) --- */
-        .sus-highlight {
-            color: var(--sus-red);
+        /* DÒNG 1: CHỮ SuS (ĐỎ) */
+        .brand-name {
+            font-size: 6em; /* Cực to */
             font-weight: 800; /* Cực đậm */
+            color: var(--sus-red);
+            line-height: 0.8; /* Khoảng cách dòng hẹp lại */
+            margin: 0;
+            /* QUAN TRỌNG: Bỏ viết hoa tự động để hiện đúng SuS */
+            text-transform: none; 
             text-shadow: 
-                0 0 10px var(--sus-red),
-                0 0 20px var(--sus-red),
-                0 0 40px var(--sus-red); /* Phát sáng đỏ mạnh mẽ */
+                0 0 20px rgba(255, 0, 60, 0.6),
+                0 0 50px rgba(255, 0, 60, 0.3);
+            animation: redPulse 3s infinite alternate;
         }
 
-        /* --- STYLE CHO PHẦN CÒN LẠI (XANH) --- */
-        .xp-highlight {
+        /* DÒNG 2: XP RACE (XANH) */
+        .event-name {
+            font-size: 2.2em;
+            font-weight: 700;
             color: #fff;
-            text-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
-            animation: pulse 2s infinite; /* Vẫn giữ hiệu ứng nhịp đập xanh */
+            text-transform: uppercase; /* Chữ này thì viết hoa */
+            letter-spacing: 8px; /* Giãn chữ ra cho sang */
+            text-shadow: 0 0 10px var(--primary-color);
+            position: relative;
+            top: -10px; /* Đẩy lên gần chữ SuS một chút */
         }
+        
+        .lightning { color: var(--gold); margin: 0 10px; }
 
         .subtitle {
             color: #8b949e;
-            font-size: 1.1em;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
+            font-size: 1em;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            opacity: 0.7;
+            margin-top: 10px;
         }
 
-        /* Khung bảng xếp hạng (Glassmorphism) */
+        /* --- BẢNG XẾP HẠNG --- */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -107,7 +114,7 @@
             transform: scale(1.01);
         }
 
-        /* Top 3 Badges */
+        /* Colors & Badges */
         .rank-badge { display: inline-block; width: 30px; height: 30px; line-height: 30px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 15px var(--gold); }
         .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
@@ -116,35 +123,37 @@
         .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
         .row-top-3 td { color: #ffab76; }
 
-        /* XP Styles */
         .gained-positive { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
         .gained-zero { color: #52525b; font-weight: normal; }
         .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa; letter-spacing: -0.5px; }
-        
         .loading { font-size: 1.5em; color: var(--primary-color); margin-top: 50px; animation: blink 1s infinite; }
 
-        /* Animations */
+        /* Animation */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse {
-            0% { text-shadow: 0 0 15px var(--primary-color); }
-            50% { text-shadow: 0 0 25px var(--primary-color), 0 0 10px #fff; }
-            100% { text-shadow: 0 0 15px var(--primary-color); }
-        }
         @keyframes blink { 50% { opacity: 0.5; } }
+        @keyframes redPulse { 
+            0% { text-shadow: 0 0 20px var(--sus-red); } 
+            100% { text-shadow: 0 0 40px var(--sus-red), 0 0 10px #fff; } 
+        }
 
         @media (max-width: 600px) {
-            h1 { font-size: 2.2em; } /* Mobile nhỏ lại chút */
+            .brand-name { font-size: 4em; }
+            .event-name { font-size: 1.5em; letter-spacing: 4px; }
             td, th { padding: 12px 10px; font-size: 1em; }
-            .subtitle { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <h1>
-        ⚡ <span class="sus-highlight">SuS</span> <span class="xp-highlight">XP RACE</span> ⚡
-    </h1>
-    <div class="subtitle">Official Clan Leaderboard • Season 1</div>
+    <div class="logo-section">
+        <div class="brand-name">SuS</div>
+        
+        <div class="event-name">
+            <span class="lightning">⚡</span> XP RACE <span class="lightning">⚡</span>
+        </div>
+        
+        <div class="subtitle">Official Clan Leaderboard • Season 1</div>
+    </div>
 
     <div id="loading" class="loading">
         Connecting to Server... 📡
@@ -166,14 +175,12 @@
     </div>
 
     <script>
-        // Link API của bạn
         const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
 
         async function main() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
-
                 data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
 
                 const tbody = document.getElementById("tableBody");
@@ -217,9 +224,7 @@
                 document.getElementById("loading").innerHTML = "❌ Server Disconnected. Try F5.";
             }
         }
-
         main();
     </script>
-
 </body>
 </html>
