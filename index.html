@@ -3,41 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuS XP Race</title>
+    <title>SuS XP Race - Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Dark Mode Interface */
+        /* --- CẤU HÌNH GIAO DIỆN --- */
+        :root {
+            --primary-color: #00f2ff; /* Màu xanh Neon chủ đạo */
+            --bg-dark: #09090b;       /* Nền đen sâu */
+            --glass-bg: rgba(22, 27, 34, 0.7); /* Màu kính mờ */
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
         body {
-            background-color: #0d1117;
+            background-color: var(--bg-dark);
+            /* Hình nền mờ ảo phía sau (Pattern) */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 150, 0.1) 0%, transparent 20%);
             color: #e6edf3;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Rajdhani', sans-serif; /* Font chữ mới */
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             text-align: center;
+            min-height: 100vh;
         }
         
+        /* Tiêu đề có hiệu ứng phát sáng */
         h1 {
-            color: #2f81f7;
+            color: #fff;
+            font-size: 3em;
             margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(47, 129, 247, 0.3);
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
+            animation: pulse 2s infinite;
         }
 
         .subtitle {
-            color: #7d8590;
-            font-size: 0.9em;
-            margin-bottom: 30px;
+            color: #8b949e;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* Leaderboard Container */
+        /* Khung bảng xếp hạng phong cách Kính (Glassmorphism) */
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            background-color: #161b22;
-            border-radius: 12px;
-            border: 1px solid #30363d;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* Hiệu ứng làm mờ nền sau kính */
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideUp 0.8s ease-out; /* Hoạt ảnh trượt lên */
         }
 
         table {
@@ -46,53 +71,111 @@
         }
 
         th {
-            background-color: #21262d;
-            color: #8b949e;
-            padding: 15px;
-            font-size: 13px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--primary-color);
+            padding: 20px;
+            font-size: 1.1em;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 1px solid #30363d;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
         }
 
         td {
-            padding: 16px;
-            border-bottom: 1px solid #21262d;
-            font-size: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.2em;
+            font-weight: 600;
         }
 
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: #1c2128; transition: 0.2s; }
+        /* Hiệu ứng khi di chuột vào dòng */
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+        tbody tr:hover {
+            background-color: rgba(0, 242, 255, 0.05); /* Sáng nhẹ màu xanh */
+            transform: scale(1.01); /* Phóng to nhẹ */
+        }
 
-        /* Top 3 Styling */
-        .rank-1 { color: #e3b341; font-weight: bold; font-size: 1.3em; text-shadow: 0 0 15px rgba(227, 179, 65, 0.4); }
-        .rank-2 { color: #aeb4be; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px rgba(174, 180, 190, 0.3); }
-        .rank-3 { color: #cd7f32; font-weight: bold; font-size: 1.1em; text-shadow: 0 0 10px rgba(205, 127, 50, 0.3); }
+        /* --- TRANG TRÍ TOP 3 --- */
+        .rank-badge {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
 
-        /* Gained XP Styling */
-        .gained-positive { color: #3fb950; font-weight: bold; } /* Green */
-        .gained-zero { color: #7d8590; opacity: 0.7; } /* Grey */
-
-        .total-xp { color: #7d8590; font-family: monospace; }
+        /* Top 1 - Vàng rực */
+        .top-1 { 
+            background: linear-gradient(45deg, #ffd700, #fffacd); 
+            box-shadow: 0 0 15px var(--gold);
+        }
+        .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
         
-        .loading { font-style: italic; color: #8b949e; margin-top: 20px; font-size: 1.1em; }
+        /* Top 2 - Bạc sáng */
+        .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
+        .row-top-2 td { color: #e0e0e0; }
+
+        /* Top 3 - Đồng đỏ */
+        .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
+        .row-top-3 td { color: #ffab76; }
+
+        /* Số XP */
+        .gained-positive { 
+            color: #4ade80; /* Xanh lá sáng */
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+        .gained-zero { color: #52525b; font-weight: normal; }
+        .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa; letter-spacing: -0.5px; }
+        
+        /* Loading */
+        .loading { 
+            font-size: 1.5em; 
+            color: var(--primary-color); 
+            margin-top: 50px;
+            animation: blink 1s infinite;
+        }
+
+        /* --- ANIMATIONS (HOẠT ẢNH) --- */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { text-shadow: 0 0 15px var(--primary-color); }
+            50% { text-shadow: 0 0 25px var(--primary-color), 0 0 10px #fff; }
+            100% { text-shadow: 0 0 15px var(--primary-color); }
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            td, th { padding: 12px 10px; font-size: 1em; }
+            .subtitle { display: none; } /* Ẩn phụ đề trên mobile cho gọn */
+        }
     </style>
 </head>
 <body>
 
-    <h1>🏆 SuS XP RACE 🏆</h1>
-    <div class="subtitle">Ranking based on Gained XP</div>
+    <h1>⚡ SuS XP RACE ⚡</h1>
+    <div class="subtitle">Official Clan Leaderboard • Season 1</div>
 
     <div id="loading" class="loading">
-        ⏳ Loading data...
+        Connecting to Server... 📡
     </div>
 
     <div class="container" id="rankingTable" style="display:none;">
         <table>
             <thead>
                 <tr>
-                    <th width="10%">Rank</th>
-                    <th width="40%" style="text-align:left; padding-left: 20px;">Member</th>
+                    <th width="10%">#</th>
+                    <th width="40%" style="text-align:left; padding-left: 20px;">Player</th>
                     <th width="25%">Gained XP</th>
                     <th width="25%">Total XP</th>
                 </tr>
@@ -103,7 +186,7 @@
     </div>
 
     <script>
-        // --- YOUR API LINK (Already correct) ---
+        // Link API của bạn
         const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
 
         async function main() {
@@ -111,7 +194,7 @@
                 const res = await fetch(API_URL);
                 const data = await res.json();
 
-                // 1. Sort by Gained XP (Descending)
+                // Sắp xếp
                 data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
 
                 const tbody = document.getElementById("tableBody");
@@ -119,32 +202,44 @@
 
                 data.forEach((user, index) => {
                     const rank = index + 1;
-                    let rankClass = "";
-                    let icon = "";
+                    
+                    // Xử lý Giao diện Top 3
+                    let rankBadge = rank;
+                    let rowClass = "";
+                    
+                    if (rank === 1) { 
+                        rankBadge = `<span class="rank-badge top-1">1</span>`; 
+                        rowClass = "row-top-1";
+                    } else if (rank === 2) { 
+                        rankBadge = `<span class="rank-badge top-2">2</span>`; 
+                        rowClass = "row-top-2";
+                    } else if (rank === 3) { 
+                        rankBadge = `<span class="rank-badge top-3">3</span>`; 
+                        rowClass = "row-top-3";
+                    }
 
-                    // Top 3 Icons
-                    if (rank === 1) { rankClass = "rank-1"; icon = "👑 "; }
-                    else if (rank === 2) { rankClass = "rank-2"; icon = "🥈 "; }
-                    else if (rank === 3) { rankClass = "rank-3"; icon = "🥉 "; }
-
-                    // Format Numbers
+                    // Format số
                     const gainedVal = Number(user.gained_xp);
                     const currentVal = Number(user.current_xp);
                     
                     const gainedStr = gainedVal.toLocaleString();
                     const currentStr = currentVal.toLocaleString();
 
-                    // Color logic
+                    // Màu sắc XP
                     const gainedClass = gainedVal > 0 ? "gained-positive" : "gained-zero";
                     const gainedSign = gainedVal > 0 ? "+" : "";
+                    
+                    // Hiệu ứng phát sáng cho người cày nhiều (ví dụ > 100tr XP)
+                    let glowEffect = "";
+                    if (gainedVal > 100000000) glowEffect = "text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);";
 
                     html += `
-                        <tr>
-                            <td class="${rankClass}">${rank}</td>
-                            <td style="text-align:left; padding-left: 20px;" class="${rankClass}">
-                                ${icon}${user.name}
+                        <tr class="${rowClass}">
+                            <td style="text-align:center;">${rankBadge}</td>
+                            <td style="text-align:left; padding-left: 20px;">
+                                ${user.name}
                             </td>
-                            <td class="${gainedClass}">${gainedSign}${gainedStr}</td>
+                            <td class="${gainedClass}" style="${glowEffect}">${gainedSign}${gainedStr}</td>
                             <td class="total-xp">${currentStr}</td>
                         </tr>
                     `;
@@ -152,13 +247,12 @@
 
                 tbody.innerHTML = html;
                 
-                // Show table
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("rankingTable").style.display = "block";
 
             } catch (err) {
                 console.error(err);
-                document.getElementById("loading").innerHTML = "❌ Connection Error! Please refresh the page.";
+                document.getElementById("loading").innerHTML = "❌ Server Disconnected. Try F5.";
             }
         }
 
