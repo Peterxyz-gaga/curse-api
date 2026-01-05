@@ -1,102 +1,155 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SuS Clan – XP Tracker</title>
-  <style>
-    :root{ --bg:#0b1020; --panel:#121a32; --muted:#8aa0c7; --text:#e8eefc; --accent:#ff9800; --accent-2:#ffc107; --border: #243054; --ok:#2ecc71; }
-    *{box-sizing:border-box}
-    body{ margin:0; background:linear-gradient(180deg,#0a0f1f,#0a0f1f 60%, #0e1530); color:var(--text); font: 14px/1.5 system-ui, sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
-    .wrap{ width:min(1100px, 100%); display:grid; gap:16px; }
-    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden; }
-    header.card{ padding:16px 18px; display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
-    .title{ font-weight:700; font-size: 1.2em; color: var(--accent); }
-    button{ background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:#081225; border:0; border-radius:8px; font-weight:700; padding:8px 16px; cursor:pointer; }
-    button:disabled { opacity: 0.5; cursor: wait; }
-    .table-wrap{ overflow:auto }
-    table{ width:100%; border-collapse:separate; border-spacing:0 }
-    thead th{ position:sticky; top:0; background:rgba(15,23,48,.95); text-align:left; font-weight:700; padding:12px; border-bottom:1px solid var(--border); white-space:nowrap; }
-    tbody td{ padding:12px; border-bottom:1px dashed #1e2a4f; vertical-align:middle; }
-    .name{ font-weight:700; color: var(--accent-2); }
-    .mono{ font-family: ui-monospace, monospace; font-size: 1.1em; }
-    .locked-input { background: #0a0f1f; border: 1px solid var(--border); color: var(--muted); padding: 5px 10px; border-radius: 6px; width: 130px; text-align: right; font-family: monospace; }
-    .plus { color: var(--ok); font-weight: bold; }
-    .neutral { color: var(--muted); }
-    .center{ text-align:center; padding:24px }
-    .hidden{ display:none !important }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clan Ranking - Gained XP</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2f81f7;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #7d8590;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #161b22;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #21262d;
+            color: #7d8590;
+            padding: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #30363d;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #21262d;
+            font-size: 16px;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #21262d; }
+
+        /* Style cho Top 3 */
+        .rank-1 { color: #e3b341; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px rgba(227, 179, 65, 0.3); }
+        .rank-2 { color: #aeb4be; font-weight: bold; font-size: 1.1em; }
+        .rank-3 { color: #cd7f32; font-weight: bold; font-size: 1.1em; }
+
+        .gained-xp { color: #3fb950; font-weight: bold; } /* Màu xanh lá cho XP dương */
+        .gained-zero { color: #7d8590; } /* Màu xám nếu = 0 */
+        
+        .loading { font-style: italic; color: #8b949e; margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="card">
-      <div class="title">🛡️ SuS Clan XP Tracker</div>
-      <button id="btnReload">Cập nhật dữ liệu</button>
-    </header>
-    <section class="card table-wrap">
-      <div class="center" id="loading">Đang kết nối...</div>
-      <table id="table" class="hidden">
-        <thead>
-          <tr><th>#</th><th>Thành Viên</th><th>Current XP</th><th>Locked XP</th><th>Gained XP</th></tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </section>
-  </div>
 
- <script>
-    const CLAN_DATA = [
-        { name: "SuS TraDaVN", start: 45361534920 }, { name: "SuS Zet DiY", start: 39084720587 }, { name: "SuS Dominate", start: 38450414228 },
-        { name: "SuS QuangTong", start: 35569912243 }, { name: "SuS t autumn t", start: 26753499820 }, { name: "SuS Karma", start: 32822171477 },
-        { name: "SuS tienma", start: 18232356437 }, { name: "SuS Daedra", start: 11805772350 }, { name: "SuS GuarDian", start: 16929364157 },
-        { name: "SuS Yoshe DiY", start: 6342424017 }, { name: "SuS Nightly", start: 7313042667 }, { name: "SuS Hung buda", start: 4883952202 },
-        { name: "SuS Axolotl", start: 8345765571 }, { name: "SuS D3fault", start: 4009205331 }, { name: "SuS Skill", start: 5604750109 },
-        { name: "SuS Merlon", start: 4349818322 }, { name: "SuS MicaelQuan", start: 4788178973 }, { name: "SuS Eupto", start: 3066982450 },
-        { name: "SuS UnknownX", start: 3942788125 }, { name: "SuS Bobross", start: 5216233384 }, { name: "SuS HibikiVN", start: 1586069982 },
-        { name: "SuS Zeta", start: 1772622138 }, { name: "SuS HuyKhoi VN", start: 4251076795 }, { name: "SuS Maxmillnos", start: 2251216584 },
-        { name: "SuS J97 Bo Con", start: 2622015974 }, { name: "SuS Bun Cha VN", start: 1724494062 }, { name: "SuS GoG1t0", start: 2363285870 },
-        { name: "SuS Naow", start: 2699422340 }, { name: "SuS DuyKhanh", start: 2629377805 }, { name: "SuS VuSua VN", start: 1712168220 },
-        { name: "SuS SHIELDHERO", start: 1311790623 }, { name: "SuS lucky", start: 2680717114 }, { name: "SuS Uruneeshi", start: 1496485944 },
-        { name: "SuS NoSlackSky", start: 1600803318 }, { name: "SuS mehdipro", start: 1719139440 }, { name: "SuS TraDao VN", start: 1678100063 },
-        { name: "SuS SadSaiki", start: 719832247 }
-    ];
+    <h1>🏆 Bảng Xếp Hạng Clan 🏆</h1>
+    <div class="subtitle">Đua Top XP (Tính từ lúc chốt sổ Locked XP)</div>
 
-    const els = { btn: document.getElementById('btnReload'), load: document.getElementById('loading'), table: document.getElementById('table'), tbody: document.getElementById('tbody') };
-    const fmt = n => Number(n).toLocaleString('en-US');
-    const getLock = n => parseInt(localStorage.getItem(`locked_${n}`)) || null;
+    <div id="loading" class="loading">⏳ Đang tải dữ liệu từ server...</div>
 
-    function render(){
-        els.tbody.innerHTML = '';
-        const sorted = [...CLAN_DATA].sort((a,b) => ((b.curr||0) - (getLock(b.name)||b.start)) - ((a.curr||0) - (getLock(a.name)||a.start)));
-        sorted.forEach((r,i) => {
-            const lock = getLock(r.name) || r.start;
-            const cur = r.curr || r.start; 
-            const gain = cur - lock;
-            els.tbody.innerHTML += `<tr>
-                <td class="muted">${i+1}</td><td class="name">${r.name} ${r.curr?'✅':'⏳'}</td><td class="mono" style="color:#fff">${fmt(cur)}</td>
-                <td><input type="number" class="locked-input" value="${lock}" onchange="localStorage.setItem('locked_${r.name}',this.value);render()" onclick="this.select()"></td>
-                <td class="mono ${gain>0?'plus':'neutral'}">${gain>0?'+':''}${fmt(gain)}</td>
-            </tr>`;
-        });
-    }
+    <div class="container" id="rankingTable" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th width="10%">Hạng</th>
+                    <th width="40%" style="text-align:left; padding-left: 20px;">Thành Viên</th>
+                    <th width="25%">Gained XP</th>
+                    <th width="25%">Tổng XP</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
 
-    async function fetchAll(){
-        els.load.classList.remove('hidden'); els.table.classList.remove('hidden'); els.btn.disabled=true; render();
-        // CHIA NHỎ: Mỗi lần tải 5 người
-        for(let i=0; i<CLAN_DATA.length; i+=5){
-            const group = CLAN_DATA.slice(i, i+5).map(m=>encodeURIComponent(m.name)).join(',');
-            els.load.innerText = `Đang tải nhóm ${Math.ceil(i/5)+1}...`;
+    <script>
+        // --- THAY LINK APPS SCRIPT CỦA BẠN VÀO ĐÂY ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbzUsxQ8Ynnpd5zgszjlmKELtuQyX0jSZ8xs9WKwVlLCfqGeRUcN8x3ZqMMs5wWloN1SlQ/exec";
+
+        async function main() {
             try {
-                const res = await fetch(`https://curse-api.vercel.app/api/track?users=${group}`);
-                (await res.json()).forEach(d => { const m=CLAN_DATA.find(x=>x.name===d.name); if(m) m.curr=d.xp; });
-                render();
-            } catch(e){ console.log(e); }
-        }
-        els.load.classList.add('hidden'); els.btn.disabled=false; els.btn.innerText="Cập nhật dữ liệu";
-    }
+                const res = await fetch(API_URL);
+                const data = await res.json();
 
-    els.btn.onclick = fetchAll;
-    fetchAll();
-  </script>
+                // 1. Sắp xếp: Ai cày được nhiều XP nhất lên đầu
+                data.sort((a, b) => b.gained_xp - a.gained_xp);
+
+                const tbody = document.getElementById("tableBody");
+                let html = "";
+
+                data.forEach((user, index) => {
+                    const rank = index + 1;
+                    let rankClass = "";
+                    let icon = "";
+
+                    // Xử lý Top 3
+                    if (rank === 1) { rankClass = "rank-1"; icon = "👑 "; }
+                    else if (rank === 2) { rankClass = "rank-2"; icon = "🥈 "; }
+                    else if (rank === 3) { rankClass = "rank-3"; icon = "🥉 "; }
+
+                    // Định dạng số (thêm dấu phẩy)
+                    const gained = Number(user.gained_xp).toLocaleString();
+                    const current = Number(user.current_xp).toLocaleString();
+
+                    // Màu sắc cột Gained XP
+                    const gainedClass = user.gained_xp > 0 ? "gained-xp" : "gained-zero";
+                    const gainedSign = user.gained_xp > 0 ? "+" : "";
+
+                    html += `
+                        <tr>
+                            <td class="${rankClass}">${rank}</td>
+                            <td style="text-align:left; padding-left: 20px;" class="${rankClass}">
+                                ${icon}${user.name}
+                            </td>
+                            <td class="${gainedClass}">${gainedSign}${gained}</td>
+                            <td style="color: #7d8590;">${current}</td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = html;
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("rankingTable").style.display = "block";
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById("loading").innerText = "❌ Lỗi kết nối! Vui lòng thử lại sau.";
+            }
+        }
+
+        main();
+    </script>
+
 </body>
 </html>
