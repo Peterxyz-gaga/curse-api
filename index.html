@@ -9,7 +9,7 @@
     <style>
         /* --- CẤU HÌNH GIAO DIỆN --- */
         :root {
-            --primary-color: #00f2ff; /* Xanh Neon (Dùng cho các chi tiết phụ) */
+            --primary-color: #00f2ff; /* Xanh Neon */
             --sus-red: #ff003c;       /* MÀU ĐỎ NEON CHỦ ĐẠO */
             --bg-dark: #09090b;       /* Nền đen sâu */
             --glass-bg: rgba(22, 27, 34, 0.7); /* Màu kính mờ */
@@ -19,7 +19,6 @@
 
         body {
             background-color: var(--bg-dark);
-            /* Nền tối tập trung ánh sáng đỏ vào giữa */
             background-image: radial-gradient(circle at 50% 20%, rgba(255, 0, 60, 0.2) 0%, transparent 50%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
@@ -31,12 +30,12 @@
         
         /* --- TIÊU ĐỀ CHÍNH --- */
         h1 {
-            font-size: 3em; /* Kích thước cơ bản */
+            font-size: 3em;
             margin-bottom: 10px;
-            text-transform: none; /* Giữ nguyên chữ hoa/thường */
+            text-transform: none;
             display: flex;
             justify-content: center;
-            align-items: baseline; /* Canh lề chân chữ cho đều */
+            align-items: baseline;
             gap: 15px;
             flex-wrap: wrap;
         }
@@ -44,31 +43,32 @@
         /* STYLE CHO CHỮ "SuS" (TO & ĐỎ) */
         .sus-brand {
             color: var(--sus-red);
-            font-weight: 800; /* Cực đậm */
-            font-size: 1.4em; /* TO HƠN 40% so với chữ bình thường */
+            font-weight: 800;
+            font-size: 1.4em;
             text-shadow: 
                 0 0 20px rgba(255, 0, 60, 1),
                 0 0 40px rgba(255, 0, 60, 0.6),
-                0 0 60px rgba(255, 0, 60, 0.4); /* Hiệu ứng cháy rực rỡ */
+                0 0 60px rgba(255, 0, 60, 0.4);
             animation: intenseRedPulse 2s infinite alternate;
         }
 
         /* STYLE CHO CHỮ "XP RACE" (NHỎ & TRẮNG) */
         .xp-event {
-            color: #ffffff; /* CHUYỂN SANG MÀU TRẮNG */
+            color: #ffffff;
             font-weight: 700;
-            font-size: 0.7em; /* NHỎ BẰNG 70% chữ bình thường */
+            font-size: 0.7em;
             text-transform: uppercase;
-            letter-spacing: 4px; /* Giãn rộng ra cho sang */
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Phát sáng trắng nhẹ */
-            opacity: 0.9; /* Hơi mờ đi một chút để nhường spotlight cho SuS */
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            opacity: 0.9;
         }
 
-        .lightning {
-            color: var(--gold);
-            font-size: 0.8em; /* Tia sét cũng nhỏ lại cho cân đối */
-            text-shadow: 0 0 10px var(--gold);
-            opacity: 0.8;
+        /* STYLE CHO CỜ ĐUA (MỚI) */
+        .flag-icon {
+            font-size: 0.8em; /* Kích thước vừa phải */
+            opacity: 0.9;
+            /* Thêm chút hiệu ứng bóng trắng nhẹ để nổi trên nền tối */
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
         }
 
         .subtitle {
@@ -116,7 +116,7 @@
 
         tbody tr { transition: all 0.3s ease; }
         tbody tr:hover {
-            background-color: rgba(255, 0, 60, 0.05); /* Hover chuyển sang màu đỏ nhạt cho hợp tông */
+            background-color: rgba(255, 0, 60, 0.05);
             transform: scale(1.01);
         }
 
@@ -137,7 +137,6 @@
         /* --- ANIMATIONS --- */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0.5; } }
-        /* Hiệu ứng đập mạnh hơn cho chữ SuS */
         @keyframes intenseRedPulse { 
             0% { text-shadow: 0 0 20px var(--sus-red), 0 0 10px rgba(255,255,255,0.5); transform: scale(1); } 
             100% { text-shadow: 0 0 50px var(--sus-red), 0 0 20px rgba(255,255,255,0.8); transform: scale(1.05); color: #ff4d4d; } 
@@ -152,8 +151,10 @@
 <body>
 
     <h1>
-        <span class="lightning">⚡</span> 
-        <span class="sus-brand">SuS</span> <span class="xp-event">XP RACE</span> <span class="lightning">⚡</span>
+        <span class="flag-icon">🏁</span> 
+        <span class="sus-brand">SuS</span> 
+        <span class="xp-event">XP RACE</span> 
+        <span class="flag-icon">🏁</span>
     </h1>
     <div class="subtitle">Official Clan Leaderboard • Season 1</div>
 
