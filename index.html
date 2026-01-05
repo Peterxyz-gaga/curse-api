@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clan Ranking - Gained XP</title>
+    <title>SuS XP Race</title>
     <style>
-        /* Giao diện Dark Mode hầm hố */
+        /* Dark Mode Interface */
         body {
             background-color: #0d1117;
             color: #e6edf3;
@@ -29,7 +29,7 @@
             margin-bottom: 30px;
         }
 
-        /* Khung bảng xếp hạng */
+        /* Leaderboard Container */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -64,14 +64,14 @@
         tr:last-child td { border-bottom: none; }
         tr:hover { background-color: #1c2128; transition: 0.2s; }
 
-        /* Màu sắc & Icon cho Top 3 */
+        /* Top 3 Styling */
         .rank-1 { color: #e3b341; font-weight: bold; font-size: 1.3em; text-shadow: 0 0 15px rgba(227, 179, 65, 0.4); }
         .rank-2 { color: #aeb4be; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px rgba(174, 180, 190, 0.3); }
         .rank-3 { color: #cd7f32; font-weight: bold; font-size: 1.1em; text-shadow: 0 0 10px rgba(205, 127, 50, 0.3); }
 
-        /* Màu cho cột Gained XP */
-        .gained-positive { color: #3fb950; font-weight: bold; } /* Xanh lá */
-        .gained-zero { color: #7d8590; opacity: 0.7; } /* Xám mờ */
+        /* Gained XP Styling */
+        .gained-positive { color: #3fb950; font-weight: bold; } /* Green */
+        .gained-zero { color: #7d8590; opacity: 0.7; } /* Grey */
 
         .total-xp { color: #7d8590; font-family: monospace; }
         
@@ -80,21 +80,21 @@
 </head>
 <body>
 
-    <h1>🏆 BẢNG XẾP HẠNG CLAN 🏆</h1>
-    <div class="subtitle">Đua Top XP (Tính từ lúc chốt sổ Locked XP)</div>
+    <h1>🏆 SuS XP RACE 🏆</h1>
+    <div class="subtitle">Ranking based on Gained XP</div>
 
     <div id="loading" class="loading">
-        ⏳ Đang tải dữ liệu mới nhất...
+        ⏳ Loading data...
     </div>
 
     <div class="container" id="rankingTable" style="display:none;">
         <table>
             <thead>
                 <tr>
-                    <th width="10%">Hạng</th>
-                    <th width="40%" style="text-align:left; padding-left: 20px;">Thành Viên</th>
+                    <th width="10%">Rank</th>
+                    <th width="40%" style="text-align:left; padding-left: 20px;">Member</th>
                     <th width="25%">Gained XP</th>
-                    <th width="25%">Tổng XP</th>
+                    <th width="25%">Total XP</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -103,7 +103,7 @@
     </div>
 
     <script>
-        // --- LINK API MỚI CỦA BẠN (Đã thay thế) ---
+        // --- YOUR API LINK (Already correct) ---
         const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
 
         async function main() {
@@ -111,8 +111,7 @@
                 const res = await fetch(API_URL);
                 const data = await res.json();
 
-                // 1. Sắp xếp: Ai cày nhiều nhất lên đầu
-                // Chuyển về dạng số để tính toán cho chuẩn
+                // 1. Sort by Gained XP (Descending)
                 data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
 
                 const tbody = document.getElementById("tableBody");
@@ -123,19 +122,19 @@
                     let rankClass = "";
                     let icon = "";
 
-                    // Xử lý Top 3
+                    // Top 3 Icons
                     if (rank === 1) { rankClass = "rank-1"; icon = "👑 "; }
                     else if (rank === 2) { rankClass = "rank-2"; icon = "🥈 "; }
                     else if (rank === 3) { rankClass = "rank-3"; icon = "🥉 "; }
 
-                    // Định dạng số (thêm dấu phẩy ngăn cách hàng nghìn)
+                    // Format Numbers
                     const gainedVal = Number(user.gained_xp);
                     const currentVal = Number(user.current_xp);
                     
                     const gainedStr = gainedVal.toLocaleString();
                     const currentStr = currentVal.toLocaleString();
 
-                    // Màu sắc cột Gained XP
+                    // Color logic
                     const gainedClass = gainedVal > 0 ? "gained-positive" : "gained-zero";
                     const gainedSign = gainedVal > 0 ? "+" : "";
 
@@ -153,13 +152,13 @@
 
                 tbody.innerHTML = html;
                 
-                // Tắt loading, hiện bảng
+                // Show table
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("rankingTable").style.display = "block";
 
             } catch (err) {
                 console.error(err);
-                document.getElementById("loading").innerHTML = "❌ Lỗi kết nối! Vui lòng thử tải lại trang (F5).";
+                document.getElementById("loading").innerHTML = "❌ Connection Error! Please refresh the page.";
             }
         }
 
