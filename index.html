@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CẤU HÌNH GIAO DIỆN --- */
+        /* --- CẤU HÌNH --- */
         :root {
             --primary-color: #00f2ff; /* Xanh Neon */
-            --sus-red: #ff003c;       /* MÀU ĐỎ NEON CHỦ ĐẠO */
-            --bg-dark: #09090b;       /* Nền đen sâu */
-            --glass-bg: rgba(22, 27, 34, 0.7); /* Màu kính mờ */
+            --sus-red: #ff003c;       /* ĐỎ NEON CHỦ ĐẠO */
+            --bg-dark: #09090b;       /* Nền đen */
+            --glass-bg: rgba(22, 27, 34, 0.7);
             --border-color: rgba(255, 255, 255, 0.1);
             --gold: #ffd700;
         }
@@ -28,7 +28,7 @@
             min-height: 100vh;
         }
         
-        /* --- TIÊU ĐỀ CHÍNH --- */
+        /* --- TIÊU ĐỀ --- */
         h1 {
             font-size: 3em;
             margin-bottom: 10px;
@@ -40,19 +40,77 @@
             flex-wrap: wrap;
         }
 
-        /* STYLE CHO CHỮ "SuS" (TO & ĐỎ) */
+        /* --- HIỆU ỨNG GLITCH CHO CHỮ SuS --- */
         .sus-brand {
+            position: relative;
             color: var(--sus-red);
             font-weight: 800;
-            font-size: 1.4em;
-            text-shadow: 
-                0 0 20px rgba(255, 0, 60, 1),
-                0 0 40px rgba(255, 0, 60, 0.6),
-                0 0 60px rgba(255, 0, 60, 0.4);
-            animation: intenseRedPulse 2s infinite alternate;
+            font-size: 1.5em; /* To hơn chút nữa */
+            /* Hiệu ứng rung nhẹ liên tục */
+            animation: glitch-skew 1s infinite linear alternate-reverse;
         }
 
-        /* STYLE CHO CHỮ "XP RACE" (NHỎ & TRẮNG) */
+        /* Tạo bản sao màu Xanh (Layer 1) */
+        .sus-brand::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 100%;
+            height: 100%;
+            color: var(--primary-color); /* Màu xanh làm bóng */
+            background: var(--bg-dark); /* Nền đen để che chữ gốc */
+            overflow: hidden;
+            clip-path: inset(0 0 0 0); 
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        /* Tạo bản sao màu Đỏ đậm (Layer 2) */
+        .sus-brand::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 2px;
+            width: 100%;
+            height: 100%;
+            color: #ffffff; /* Màu trắng lóe lên */
+            background: var(--bg-dark);
+            overflow: hidden;
+            clip-path: inset(0 0 0 0); 
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            opacity: 0.7;
+            z-index: -2;
+        }
+
+        /* --- CÁC HOẠT ẢNH GLITCH (Cắt xẻ hình ảnh) --- */
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 20% 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(30% 0 20% 0); }
+            40% { clip-path: inset(70% 0 10% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(50% 0 30% 0); }
+            100% { clip-path: inset(0% 0 80% 0); }
+        }
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-2deg); }
+            40% { transform: skew(2deg); }
+            60% { transform: skew(-1deg); }
+            80% { transform: skew(1deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        /* --- CÁC PHẦN KHÁC GIỮ NGUYÊN --- */
         .xp-event {
             color: #ffffff;
             font-weight: 700;
@@ -63,11 +121,9 @@
             opacity: 0.9;
         }
 
-        /* STYLE CHO CỜ ĐUA (MỚI) */
         .flag-icon {
-            font-size: 0.8em; /* Kích thước vừa phải */
+            font-size: 0.8em;
             opacity: 0.9;
-            /* Thêm chút hiệu ứng bóng trắng nhẹ để nổi trên nền tối */
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
         }
 
@@ -80,7 +136,7 @@
             opacity: 0.8;
         }
 
-        /* --- BẢNG XẾP HẠNG (Glassmorphism) --- */
+        /* Container */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -134,13 +190,8 @@
         .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa; letter-spacing: -0.5px; }
         .loading { font-size: 1.5em; color: var(--sus-red); margin-top: 50px; animation: blink 1s infinite; }
 
-        /* --- ANIMATIONS --- */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0.5; } }
-        @keyframes intenseRedPulse { 
-            0% { text-shadow: 0 0 20px var(--sus-red), 0 0 10px rgba(255,255,255,0.5); transform: scale(1); } 
-            100% { text-shadow: 0 0 50px var(--sus-red), 0 0 20px rgba(255,255,255,0.8); transform: scale(1.05); color: #ff4d4d; } 
-        }
 
         @media (max-width: 600px) {
             h1 { font-size: 2em; gap: 8px; }
@@ -152,7 +203,9 @@
 
     <h1>
         <span class="flag-icon">🏁</span> 
-        <span class="sus-brand">SuS</span> 
+        
+        <span class="sus-brand" data-text="SuS">SuS</span> 
+        
         <span class="xp-event">XP RACE</span> 
         <span class="flag-icon">🏁</span>
     </h1>
