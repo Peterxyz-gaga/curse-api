@@ -11,6 +11,7 @@
         :root {
             --primary-color: #00f2ff; /* Xanh Neon */
             --sus-red: #ff003c;       /* ĐỎ NEON CHỦ ĐẠO */
+            --sus-dark: #3a000e;      /* MÀU ĐỎ TỐI (KHI ĐÈN TẮT) */
             --bg-dark: #09090b;       /* Nền đen */
             --glass-bg: rgba(22, 27, 34, 0.7);
             --border-color: rgba(255, 255, 255, 0.1);
@@ -19,7 +20,7 @@
 
         body {
             background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 20%, rgba(255, 0, 60, 0.2) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 50% 20%, rgba(255, 0, 60, 0.15) 0%, transparent 50%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
@@ -28,7 +29,6 @@
             min-height: 100vh;
         }
         
-        /* --- TIÊU ĐỀ --- */
         h1 {
             font-size: 3em;
             margin-bottom: 10px;
@@ -40,74 +40,39 @@
             flex-wrap: wrap;
         }
 
-        /* --- HIỆU ỨNG GLITCH CHO CHỮ SuS --- */
+        /* --- HIỆU ỨNG ĐÈN HƯ (BROKEN NEON) CHO CHỮ SuS --- */
         .sus-brand {
-            position: relative;
-            color: var(--sus-red);
             font-weight: 800;
-            font-size: 1.5em; /* To hơn chút nữa */
-            /* Hiệu ứng rung nhẹ liên tục */
-            animation: glitch-skew 1s infinite linear alternate-reverse;
+            font-size: 1.5em; /* To hơn chữ thường */
+            color: var(--sus-red);
+            /* Animation chớp tắt ngẫu nhiên */
+            animation: broken-neon 4s infinite;
         }
 
-        /* Tạo bản sao màu Xanh (Layer 1) */
-        .sus-brand::before {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: -2px;
-            width: 100%;
-            height: 100%;
-            color: var(--primary-color); /* Màu xanh làm bóng */
-            background: var(--bg-dark); /* Nền đen để che chữ gốc */
-            overflow: hidden;
-            clip-path: inset(0 0 0 0); 
-            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
-            opacity: 0.7;
-            z-index: -1;
-        }
-
-        /* Tạo bản sao màu Đỏ đậm (Layer 2) */
-        .sus-brand::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 2px;
-            width: 100%;
-            height: 100%;
-            color: #ffffff; /* Màu trắng lóe lên */
-            background: var(--bg-dark);
-            overflow: hidden;
-            clip-path: inset(0 0 0 0); 
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-            opacity: 0.7;
-            z-index: -2;
-        }
-
-        /* --- CÁC HOẠT ẢNH GLITCH (Cắt xẻ hình ảnh) --- */
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(20% 0 80% 0); }
-            20% { clip-path: inset(60% 0 10% 0); }
-            40% { clip-path: inset(40% 0 50% 0); }
-            60% { clip-path: inset(80% 0 5% 0); }
-            80% { clip-path: inset(10% 0 70% 0); }
-            100% { clip-path: inset(30% 0 20% 0); }
-        }
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(10% 0 60% 0); }
-            20% { clip-path: inset(30% 0 20% 0); }
-            40% { clip-path: inset(70% 0 10% 0); }
-            60% { clip-path: inset(20% 0 50% 0); }
-            80% { clip-path: inset(50% 0 30% 0); }
-            100% { clip-path: inset(0% 0 80% 0); }
-        }
-        @keyframes glitch-skew {
-            0% { transform: skew(0deg); }
-            20% { transform: skew(-2deg); }
-            40% { transform: skew(2deg); }
-            60% { transform: skew(-1deg); }
-            80% { transform: skew(1deg); }
-            100% { transform: skew(0deg); }
+        /* KỊCH BẢN CHỚP TẮT (Keyframes) */
+        @keyframes broken-neon {
+            /* Giai đoạn sáng bình thường */
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                color: var(--sus-red);
+                text-shadow: 
+                    0 0 10px var(--sus-red),
+                    0 0 20px var(--sus-red),
+                    0 0 40px var(--sus-red),
+                    0 0 80px var(--sus-red);
+                opacity: 1;
+            }
+            /* Giai đoạn bị tắt ngúm (Mất điện) */
+            20%, 24%, 55% {
+                color: var(--sus-dark); /* Chuyển sang màu đỏ chết */
+                text-shadow: none;      /* Mất hào quang */
+                opacity: 0.5;           /* Tối đi */
+            }
+            /* Giai đoạn chập chờn nhẹ */
+            21%, 23%, 56% {
+                color: #ff4d6a; /* Sáng yếu */
+                text-shadow: 0 0 5px var(--sus-red);
+                opacity: 0.8;
+            }
         }
 
         /* --- CÁC PHẦN KHÁC GIỮ NGUYÊN --- */
@@ -203,9 +168,7 @@
 
     <h1>
         <span class="flag-icon">🏁</span> 
-        
-        <span class="sus-brand" data-text="SuS">SuS</span> 
-        
+        <span class="sus-brand">SuS</span> 
         <span class="xp-event">XP RACE</span> 
         <span class="flag-icon">🏁</span>
     </h1>
