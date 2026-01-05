@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clan Ranking - Gained XP</title>
     <style>
+        /* Giao diện Dark Mode hầm hố */
         body {
             background-color: #0d1117;
             color: #e6edf3;
@@ -19,6 +20,7 @@
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(47, 129, 247, 0.3);
         }
 
         .subtitle {
@@ -27,11 +29,12 @@
             margin-bottom: 30px;
         }
 
+        /* Khung bảng xếp hạng */
         .container {
             max-width: 900px;
             margin: 0 auto;
             background-color: #161b22;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #30363d;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -44,39 +47,45 @@
 
         th {
             background-color: #21262d;
-            color: #7d8590;
+            color: #8b949e;
             padding: 15px;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
+            letter-spacing: 1px;
             border-bottom: 1px solid #30363d;
         }
 
         td {
-            padding: 15px;
+            padding: 16px;
             border-bottom: 1px solid #21262d;
             font-size: 16px;
         }
 
         tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: #21262d; }
+        tr:hover { background-color: #1c2128; transition: 0.2s; }
 
-        /* Style cho Top 3 */
-        .rank-1 { color: #e3b341; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px rgba(227, 179, 65, 0.3); }
-        .rank-2 { color: #aeb4be; font-weight: bold; font-size: 1.1em; }
-        .rank-3 { color: #cd7f32; font-weight: bold; font-size: 1.1em; }
+        /* Màu sắc & Icon cho Top 3 */
+        .rank-1 { color: #e3b341; font-weight: bold; font-size: 1.3em; text-shadow: 0 0 15px rgba(227, 179, 65, 0.4); }
+        .rank-2 { color: #aeb4be; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px rgba(174, 180, 190, 0.3); }
+        .rank-3 { color: #cd7f32; font-weight: bold; font-size: 1.1em; text-shadow: 0 0 10px rgba(205, 127, 50, 0.3); }
 
-        .gained-xp { color: #3fb950; font-weight: bold; } /* Màu xanh lá cho XP dương */
-        .gained-zero { color: #7d8590; } /* Màu xám nếu = 0 */
+        /* Màu cho cột Gained XP */
+        .gained-positive { color: #3fb950; font-weight: bold; } /* Xanh lá */
+        .gained-zero { color: #7d8590; opacity: 0.7; } /* Xám mờ */
+
+        .total-xp { color: #7d8590; font-family: monospace; }
         
-        .loading { font-style: italic; color: #8b949e; margin-top: 20px; }
+        .loading { font-style: italic; color: #8b949e; margin-top: 20px; font-size: 1.1em; }
     </style>
 </head>
 <body>
 
-    <h1>🏆 Bảng Xếp Hạng Clan 🏆</h1>
+    <h1>🏆 BẢNG XẾP HẠNG CLAN 🏆</h1>
     <div class="subtitle">Đua Top XP (Tính từ lúc chốt sổ Locked XP)</div>
 
-    <div id="loading" class="loading">⏳ Đang tải dữ liệu từ server...</div>
+    <div id="loading" class="loading">
+        ⏳ Đang tải dữ liệu mới nhất...
+    </div>
 
     <div class="container" id="rankingTable" style="display:none;">
         <table>
@@ -94,16 +103,17 @@
     </div>
 
     <script>
-        // --- THAY LINK APPS SCRIPT CỦA BẠN VÀO ĐÂY ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbzUsxQ8Ynnpd5zgszjlmKELtuQyX0jSZ8xs9WKwVlLCfqGeRUcN8x3ZqMMs5wWloN1SlQ/exec";
+        // --- LINK API MỚI CỦA BẠN (Đã thay thế) ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
 
         async function main() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
 
-                // 1. Sắp xếp: Ai cày được nhiều XP nhất lên đầu
-                data.sort((a, b) => b.gained_xp - a.gained_xp);
+                // 1. Sắp xếp: Ai cày nhiều nhất lên đầu
+                // Chuyển về dạng số để tính toán cho chuẩn
+                data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
 
                 const tbody = document.getElementById("tableBody");
                 let html = "";
@@ -118,13 +128,16 @@
                     else if (rank === 2) { rankClass = "rank-2"; icon = "🥈 "; }
                     else if (rank === 3) { rankClass = "rank-3"; icon = "🥉 "; }
 
-                    // Định dạng số (thêm dấu phẩy)
-                    const gained = Number(user.gained_xp).toLocaleString();
-                    const current = Number(user.current_xp).toLocaleString();
+                    // Định dạng số (thêm dấu phẩy ngăn cách hàng nghìn)
+                    const gainedVal = Number(user.gained_xp);
+                    const currentVal = Number(user.current_xp);
+                    
+                    const gainedStr = gainedVal.toLocaleString();
+                    const currentStr = currentVal.toLocaleString();
 
                     // Màu sắc cột Gained XP
-                    const gainedClass = user.gained_xp > 0 ? "gained-xp" : "gained-zero";
-                    const gainedSign = user.gained_xp > 0 ? "+" : "";
+                    const gainedClass = gainedVal > 0 ? "gained-positive" : "gained-zero";
+                    const gainedSign = gainedVal > 0 ? "+" : "";
 
                     html += `
                         <tr>
@@ -132,19 +145,21 @@
                             <td style="text-align:left; padding-left: 20px;" class="${rankClass}">
                                 ${icon}${user.name}
                             </td>
-                            <td class="${gainedClass}">${gainedSign}${gained}</td>
-                            <td style="color: #7d8590;">${current}</td>
+                            <td class="${gainedClass}">${gainedSign}${gainedStr}</td>
+                            <td class="total-xp">${currentStr}</td>
                         </tr>
                     `;
                 });
 
                 tbody.innerHTML = html;
+                
+                // Tắt loading, hiện bảng
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("rankingTable").style.display = "block";
 
             } catch (err) {
                 console.error(err);
-                document.getElementById("loading").innerText = "❌ Lỗi kết nối! Vui lòng thử lại sau.";
+                document.getElementById("loading").innerHTML = "❌ Lỗi kết nối! Vui lòng thử tải lại trang (F5).";
             }
         }
 
