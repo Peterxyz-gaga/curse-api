@@ -52,8 +52,8 @@
         .bg-animation-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; /* Nằm trên gradient nền, dưới nội dung */
-            pointer-events: none; /* Không cản trở click */
+            z-index: -1; 
+            pointer-events: none; 
         }
 
         /* Tạo 1 hạt bụi (class dùng chung) */
@@ -62,11 +62,10 @@
             background: #fff;
             border-radius: 50%;
             opacity: 0;
-            filter: blur(3px); /* Làm mờ tạo hiệu ứng glow bụi */
+            filter: blur(3px); 
             animation: float-particles infinite linear;
         }
 
-        /* Cấu hình cụ thể cho từng hạt bụi (Kích thước, vị trí, thời gian bay) */
         .p-1  { width: 4px; height: 4px; left: 10%; top: 110%; animation-duration: 15s; color: var(--sus-red); box-shadow: 0 0 10px var(--sus-red); animation-delay: 0s; }
         .p-2  { width: 3px; height: 3px; left: 30%; top: 110%; animation-duration: 22s; color: #fff; box-shadow: 0 0 8px #fff; animation-delay: 2s; }
         .p-3  { width: 5px; height: 5px; left: 50%; top: 110%; animation-duration: 18s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 4s; }
@@ -76,63 +75,56 @@
         .p-7  { width: 6px; height: 6px; left: 20%; top: 110%; animation-duration: 16s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 6s; }
         .p-8  { width: 3px; height: 3px; left: 60%; top: 110%; animation-duration: 20s; color: var(--primary-color); box-shadow: 0 0 8px var(--primary-color); animation-delay: 0.5s; }
 
-        /* Animation bụi bay từ dưới lên và mờ dần */
         @keyframes float-particles {
             0%   { transform: translateY(0); opacity: 0; }
             10%  { opacity: 0.7; }
             90%  { opacity: 0.7; }
-            100% { transform: translateY(-120vh); opacity: 0; } /* Bay quá chiều cao màn hình */
+            100% { transform: translateY(-120vh); opacity: 0; }
         }
 
-        /* --- 🔵 LOGO IMAGE --- */
-        .race-logo {
-            display: block;
-            margin: 0 auto -10px auto; /* Canh giữa, kéo tiêu đề lên gần */
-            max-width: 180px; /* Kích thước logo */
-            height: auto;
-            /* Thêm chút hiệu ứng hào quang cho logo nổi bật */
-            filter: drop-shadow(0 0 12px rgba(255,255,255,0.4));
-            animation: logo-glow 3s infinite alternate;
-        }
-
-        /* --- TIÊU ĐỀ LIÊN MINH --- */
-        h1 {
-            font-size: 3em;
-            margin-top: 0; /* Xóa margin top mặc định vì đã có logo */
-            margin-bottom: 10px;
-            text-transform: none;
+        /* --- TIÊU ĐỀ LIÊN MINH (CẬP NHẬT MỚI) --- */
+        .header-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: baseline;
-            gap: 12px;
-            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
         }
 
         /* FASUMES Brand */
         .fasumes-brand {
             font-weight: 800;
-            font-size: 1.5em;
+            font-size: 4.5em; /* Chữ bự choán ngợp */
             color: var(--fame-pink);
             text-shadow: 0 0 15px var(--fame-pink), 0 0 30px rgba(255,20,147,0.6);
             animation: pulse-pink 2s infinite alternate-reverse;
             text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        /* Hàng chứa XP Race và Kiếm */
+        .sub-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .xp-event {
             color: var(--primary-color);
             font-weight: 700;
-            font-size: 0.7em;
+            font-size: 2em;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(0,242,255,0.5);
+            letter-spacing: 6px;
+            text-shadow: 0 0 15px rgba(0,242,255,0.6);
             opacity: 0.9;
-            margin-left: 10px;
         }
 
-        .flag-icon {
-            font-size: 0.8em;
+        .sword-icon {
+            font-size: 2.5em;
             opacity: 0.9;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 10px rgba(0,242,255,0.5));
         }
 
         .subtitle {
@@ -156,7 +148,7 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             overflow: hidden;
             animation: slideUp 0.8s ease-out;
-            position: relative; /* Đảm bảo nằm trên lớp bụi nền */
+            position: relative; 
             z-index: 10;
         }
 
@@ -194,153 +186,10 @@
         /* Rank Badges & Colors */
         .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         
-        /* Top 1 */
         .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--gold); transform: scale(1.1); }
         .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
         .row-top-1 td span.tag-sus, .row-top-1 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
 
-        /* Top 2 */
         .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
         .row-top-2 td { color: var(--silver-cool); text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 5px rgba(0,242,255,0.1); }
-        .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
-        
-        /* Top 3 */
-        .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
-        .row-top-3 td { color: var(--rich-bronze); }
-        .row-top-3 td span.tag-sus, .row-top-3 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
-
-        /* XP Colors */
-        .gained-positive { 
-            color: var(--neon-green) !important; 
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.4) !important;
-            font-weight: 700;
-        }
-        .gained-zero { color: #52525b !important; font-weight: normal; }
-        .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa !important; letter-spacing: -0.5px; }
-        
-        .loading { font-size: 1.5em; color: #fff; margin-top: 50px; animation: blink 1s infinite; text-shadow: 0 0 10px #fff; }
-
-        /* Animations */
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        @keyframes pulse-pink { 0% { text-shadow: 0 0 15px var(--fame-pink); } 100% { text-shadow: 0 0 35px var(--fame-pink), 0 0 10px #fff; transform: scale(1.02); } }
-        @keyframes logo-glow { 0% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); } 100% { filter: drop-shadow(0 0 18px rgba(255,255,255,0.6)); } }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8em; gap: 6px; }
-            .fasumes-brand { font-size: 1.3em; }
-            td, th { padding: 12px 8px; font-size: 1em; }
-            .race-logo { max-width: 120px; } /* Thu nhỏ logo trên mobile */
-        }
-    </style>
-</head>
-<body>
-
-    <div class="bg-animation-container">
-        <div class="particle p-1"></div>
-        <div class="particle p-2"></div>
-        <div class="particle p-3"></div>
-        <div class="particle p-4"></div>
-        <div class="particle p-5"></div>
-        <div class="particle p-6"></div>
-        <div class="particle p-7"></div>
-        <div class="particle p-8"></div>
-    </div>
-
-    <img src="https://i.imgur.com/vH9J9U6.png" alt="FASUMES Logo" class="race-logo">
-    <h1>
-        <span class="flag-icon">🏁</span> 
-        <span class="fasumes-brand">FASUMES</span> 
-        <span class="xp-event">XP RACE</span> 
-        <span class="flag-icon">🏁</span>
-    </h1>
-    <div class="subtitle">Joint Clan Leaderboard • Cross-Guild Event</div>
-
-    <div id="loading" class="loading">
-        Connecting to Cross-Guild Server... 📡
-    </div>
-
-    <div class="container" id="rankingTable" style="display:none;">
-        <table>
-            <thead>
-                <tr>
-                    <th width="10%">#</th>
-                    <th width="40%" style="text-align:left; padding-left: 20px;">Fighter</th>
-                    <th width="25%">Gained XP</th>
-                    <th width="25%">Total XP</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
-    </div>
-
-    <script>
-        // Link API của bạn giữ nguyên
-        const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
-
-        async function main() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                
-                // Sắp xếp Gained XP giảm dần
-                data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
-
-                const tbody = document.getElementById("tableBody");
-                let html = "";
-
-                data.forEach((user, index) => {
-                    const rank = index + 1;
-                    let rankBadge = rank;
-                    let rowClass = "";
-                    
-                    if (rank === 1) { rankBadge = `<span class="rank-badge top-1">1</span>`; rowClass = "row-top-1"; } 
-                    else if (rank === 2) { rankBadge = `<span class="rank-badge top-2">2</span>`; rowClass = "row-top-2"; } 
-                    else if (rank === 3) { rankBadge = `<span class="rank-badge top-3">3</span>`; rowClass = "row-top-3"; }
-
-                    // XỬ LÝ NHẬN DIỆN GUILD TAG TRONG TÊN
-                    let displayName = user.name;
-                    if (displayName.includes("SuS ")) {
-                        displayName = displayName.replace("SuS ", "<span class='tag-sus'>SuS </span>");
-                    } else if (displayName.includes("SuS")) {
-                        displayName = displayName.replace("SuS", "<span class='tag-sus'>SuS</span>");
-                    }
-                    
-                    let upperName = displayName.toUpperCase();
-                    if (upperName.includes("FAME ")) {
-                        displayName = displayName.replace(/FAME /i, "<span class='tag-fame'>$&</span>");
-                    } else if (upperName.includes("FAME")) {
-                        displayName = displayName.replace(/FAME/i, "<span class='tag-fame'>$&</span>");
-                    }
-
-                    const gainedVal = Number(user.gained_xp);
-                    const currentVal = Number(user.current_xp);
-                    const gainedStr = gainedVal.toLocaleString();
-                    const currentStr = currentVal.toLocaleString();
-                    const gainedClass = gainedVal > 0 ? "gained-positive" : "gained-zero";
-                    const gainedSign = gainedVal > 0 ? "+" : "";
-
-                    html += `
-                        <tr class="${rowClass}">
-                            <td style="text-align:center;">${rankBadge}</td>
-                            <td style="text-align:left; padding-left: 20px;">${displayName}</td>
-                            <td class="${gainedClass}">${gainedSign}${gainedStr}</td>
-                            <td class="total-xp">${currentStr}</td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = html;
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("rankingTable").style.display = "block";
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById("loading").innerHTML = "❌ Server Disconnected. Try F5.";
-            }
-        }
-        main();
-    </script>
-</body>
-</html>
+        .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important
