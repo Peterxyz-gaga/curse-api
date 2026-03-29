@@ -9,64 +9,63 @@
     <style>
         /* --- CẤU HÌNH MÀU SẮC LIÊN GUILD --- */
         :root {
-            --primary-color: #00f2ff; /* Xanh Neon */
-            --sus-red: #ff003c;       /* ĐỎ SuS */
+            --primary-color: #00f2ff;
+            --sus-red: #ff003c;       
             --sus-dark: #3a000e;
-            --fame-pink: #ff1493;     /* HỒNG FAME */
+            --fame-pink: #ff1493;     
             --fame-dark: #4a002b;
-            --bg-dark: #09090b;       /* Nền đen sâu */
-            --glass-bg: rgba(22, 27, 34, 0.75); /* Màu kính mờ */
+            --bg-dark: #09090b;
+            --glass-bg: rgba(22, 27, 34, 0.75);
             --border-color: rgba(255, 255, 255, 0.1);
             --gold: #ffd700;
-            --silver-cool: #e0f2ff;   /* BẠC COOL TOP 2 */
-            --rich-bronze: #e6a073;    /* ĐỒNG ẤM TOP 3 */
+            --silver-cool: #e0f2ff;   
+            --rich-bronze: #e6a073;    
             --neon-green: #39ff14;
         }
 
         body {
             background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.15) 0%, transparent 45%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
             padding: 40px 20px;
             text-align: center;
             min-height: 100vh;
-            position: relative; /* Để chứa các hạt bụi nền */
-            overflow-x: hidden; /* Tránh hiện thanh cuộn ngang do bụi bay */
+            position: relative; 
+            overflow-x: hidden; 
         }
 
-        /* --- 🔴 HIỆU ỨNG NỀN ĐỘNG (FLOATING PARTICLES) --- */
+        /* --- NỀN ĐỘNG --- */
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; /* Nằm dưới cùng */
+            z-index: -2; 
             background-color: var(--bg-dark);
-            /* Radial Gradient làm nền ảo giác màu Đỏ/Hồng */
             background-image: 
                 radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.12) 0%, transparent 40%),
                 radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.12) 0%, transparent 40%);
         }
 
-        /* Container chứa các hạt bụi động */
         .bg-animation-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; /* Nằm trên gradient nền, dưới nội dung */
-            pointer-events: none; /* Không cản trở click */
+            z-index: -1; 
+            pointer-events: none; 
         }
 
-        /* Tạo 1 hạt bụi (class dùng chung) */
         .particle {
             position: absolute;
             background: #fff;
             border-radius: 50%;
             opacity: 0;
-            filter: blur(3px); /* Làm mờ tạo hiệu ứng glow bụi */
+            filter: blur(3px); 
             animation: float-particles infinite linear;
         }
 
-        /* Cấu hình cụ thể cho từng hạt bụi (Kích thước, vị trí, thời gian bay) */
         .p-1  { width: 4px; height: 4px; left: 10%; top: 110%; animation-duration: 15s; color: var(--sus-red); box-shadow: 0 0 10px var(--sus-red); animation-delay: 0s; }
         .p-2  { width: 3px; height: 3px; left: 30%; top: 110%; animation-duration: 22s; color: #fff; box-shadow: 0 0 8px #fff; animation-delay: 2s; }
         .p-3  { width: 5px; height: 5px; left: 50%; top: 110%; animation-duration: 18s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 4s; }
@@ -76,29 +75,33 @@
         .p-7  { width: 6px; height: 6px; left: 20%; top: 110%; animation-duration: 16s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 6s; }
         .p-8  { width: 3px; height: 3px; left: 60%; top: 110%; animation-duration: 20s; color: var(--primary-color); box-shadow: 0 0 8px var(--primary-color); animation-delay: 0.5s; }
 
-        /* Animation bụi bay từ dưới lên và mờ dần */
         @keyframes float-particles {
             0%   { transform: translateY(0); opacity: 0; }
             10%  { opacity: 0.7; }
             90%  { opacity: 0.7; }
-            100% { transform: translateY(-120vh); opacity: 0; } /* Bay quá chiều cao màn hình */
+            100% { transform: translateY(-120vh); opacity: 0; } 
         }
 
-        /* --- 🔵 LOGO IMAGE --- */
+        /* --- 🔵 LOGO IMAGE TÙY CHỈNH CHO FAME --- */
         .race-logo {
             display: block;
-            margin: 0 auto -10px auto; /* Canh giữa, kéo tiêu đề lên gần */
-            max-width: 180px; /* Kích thước logo */
+            margin: 0 auto 5px auto; 
+            max-width: 170px; /* Chỉnh độ to của logo */
             height: auto;
-            /* Thêm chút hiệu ứng hào quang cho logo nổi bật */
-            filter: drop-shadow(0 0 12px rgba(255,255,255,0.4));
-            animation: logo-glow 3s infinite alternate;
+            /* Hào quang màu hồng/tím phù hợp với logo FAME */
+            filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5));
+            animation: logo-fame-glow 3s infinite alternate;
+        }
+
+        @keyframes logo-fame-glow { 
+            0% { filter: drop-shadow(0 0 8px rgba(255, 20, 147, 0.4)); transform: scale(1); } 
+            100% { filter: drop-shadow(0 0 20px rgba(255, 20, 147, 0.8)); transform: scale(1.05); } 
         }
 
         /* --- TIÊU ĐỀ LIÊN MINH --- */
         h1 {
             font-size: 3em;
-            margin-top: 0; /* Xóa margin top mặc định vì đã có logo */
+            margin-top: 0;
             margin-bottom: 10px;
             text-transform: none;
             display: flex;
@@ -108,7 +111,6 @@
             flex-wrap: wrap;
         }
 
-        /* SuS Brand */
         .sus-brand {
             font-weight: 800;
             font-size: 1.5em;
@@ -117,7 +119,6 @@
             animation: pulse-red 2s infinite alternate;
         }
 
-        /* Dấu X ở giữa */
         .cross-mark {
             font-size: 1em;
             color: #6e7681;
@@ -125,7 +126,6 @@
             padding: 0 5px;
         }
 
-        /* FAME Brand */
         .fame-brand {
             font-weight: 800;
             font-size: 1.5em;
@@ -173,7 +173,7 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             overflow: hidden;
             animation: slideUp 0.8s ease-out;
-            position: relative; /* Đảm bảo nằm trên lớp bụi nền */
+            position: relative; 
             z-index: 10;
         }
 
@@ -204,51 +204,39 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.3) inset;
         }
 
-        /* Tag Guild trong Bảng */
         .tag-sus { color: var(--sus-red); text-shadow: 0 0 8px rgba(255,0,60,0.5); }
         .tag-fame { color: var(--fame-pink); text-shadow: 0 0 8px rgba(255,20,147,0.5); }
 
-        /* Rank Badges & Colors */
         .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         
-        /* Top 1 */
         .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--gold); transform: scale(1.1); }
         .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
         .row-top-1 td span.tag-sus, .row-top-1 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
 
-        /* Top 2 */
         .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
         .row-top-2 td { color: var(--silver-cool); text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 5px rgba(0,242,255,0.1); }
         .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
         
-        /* Top 3 */
         .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
         .row-top-3 td { color: var(--rich-bronze); }
         .row-top-3 td span.tag-sus, .row-top-3 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
 
-        /* XP Colors */
-        .gained-positive { 
-            color: var(--neon-green) !important; 
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.4) !important;
-            font-weight: 700;
-        }
+        .gained-positive { color: var(--neon-green) !important; text-shadow: 0 0 10px rgba(57, 255, 20, 0.4) !important; font-weight: 700; }
         .gained-zero { color: #52525b !important; font-weight: normal; }
         .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa !important; letter-spacing: -0.5px; }
         
         .loading { font-size: 1.5em; color: #fff; margin-top: 50px; animation: blink 1s infinite; text-shadow: 0 0 10px #fff; }
 
-        /* Animations */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0.5; } }
         @keyframes pulse-red { 0% { text-shadow: 0 0 15px var(--sus-red); } 100% { text-shadow: 0 0 35px var(--sus-red), 0 0 10px #fff; transform: scale(1.02); } }
         @keyframes pulse-pink { 0% { text-shadow: 0 0 15px var(--fame-pink); } 100% { text-shadow: 0 0 35px var(--fame-pink), 0 0 10px #fff; transform: scale(1.02); } }
-        @keyframes logo-glow { 0% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); } 100% { filter: drop-shadow(0 0 18px rgba(255,255,255,0.6)); } }
 
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; gap: 6px; }
             .sus-brand, .fame-brand { font-size: 1.3em; }
             td, th { padding: 12px 8px; font-size: 1em; }
-            .race-logo { max-width: 120px; } /* Thu nhỏ logo trên mobile */
+            .race-logo { max-width: 130px; } 
         }
     </style>
 </head>
@@ -265,7 +253,8 @@
         <div class="particle p-8"></div>
     </div>
 
-    <img src="https://i.imgur.com/vH9J9U6.png" alt="SuS x FAME Logo" class="race-logo">
+    <img src="fame-logo.png" alt="FAME Logo" class="race-logo">
+
     <h1>
         <span class="flag-icon">🏁</span> 
         <span class="sus-brand">SuS</span> 
@@ -296,7 +285,6 @@
     </div>
 
     <script>
-        // Link API của bạn giữ nguyên
         const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
 
         async function main() {
@@ -304,7 +292,6 @@
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 
-                // Sắp xếp Gained XP giảm dần
                 data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
 
                 const tbody = document.getElementById("tableBody");
@@ -319,7 +306,6 @@
                     else if (rank === 2) { rankBadge = `<span class="rank-badge top-2">2</span>`; rowClass = "row-top-2"; } 
                     else if (rank === 3) { rankBadge = `<span class="rank-badge top-3">3</span>`; rowClass = "row-top-3"; }
 
-                    // XỬ LÝ NHẬN DIỆN GUILD TAG TRONG TÊN
                     let displayName = user.name;
                     if (displayName.includes("SuS ")) {
                         displayName = displayName.replace("SuS ", "<span class='tag-sus'>SuS </span>");
