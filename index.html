@@ -3,162 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuS x FAME - XP Race</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>FASUMES Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CẤU HÌNH MÀU SẮC LIÊN GUILD --- */
+        /* --- CẤU HÌNH --- */
         :root {
-            --primary-color: #00f2ff;
-            --sus-red: #ff003c;       
-            --sus-dark: #3a000e;
-            --fame-pink: #ff1493;     
-            --fame-dark: #4a002b;
+            /* Màu nền chính */
             --bg-dark: #09090b;
+            
+            /* Màu chữ tiêu đề */
+            --fasumes-color: #ff1493; /* Hồng đậm/Đỏ rực của SuS và FAME trộn lại */
+            
+            /* Màu cho Clan và Vị trí */
+            --sus-color: #ff003c;       /* ĐỎ SuS */
+            --fame-color: #ffd700;     /* VÀNG FAME */
+            
+            /* Màu hiệu ứng Glassmorphism */
             --glass-bg: rgba(22, 27, 34, 0.75);
             --border-color: rgba(255, 255, 255, 0.1);
-            --gold: #ffd700;
-            --silver-cool: #e0f2ff;   
-            --rich-bronze: #e6a073;    
-            --neon-green: #39ff14;
+            
+            /* Màu XP */
+            --neon-green: #39ff14;     /* XANH LÁ NEON */
         }
 
         body {
             background-color: var(--bg-dark);
+            /* Hiệu ứng nền pha trộn màu Đỏ và Hồng */
             background-image: 
-                radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.15) 0%, transparent 45%);
+                radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.1) 0%, transparent 45%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
             padding: 40px 20px;
             text-align: center;
             min-height: 100vh;
-            position: relative; 
-            overflow-x: hidden; 
         }
-
-        /* --- NỀN ĐỘNG --- */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; 
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.12) 0%, transparent 40%);
-        }
-
-        .bg-animation-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; 
-            pointer-events: none; 
-        }
-
-        .particle {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            filter: blur(3px); 
-            animation: float-particles infinite linear;
-        }
-
-        .p-1  { width: 4px; height: 4px; left: 10%; top: 110%; animation-duration: 15s; color: var(--sus-red); box-shadow: 0 0 10px var(--sus-red); animation-delay: 0s; }
-        .p-2  { width: 3px; height: 3px; left: 30%; top: 110%; animation-duration: 22s; color: #fff; box-shadow: 0 0 8px #fff; animation-delay: 2s; }
-        .p-3  { width: 5px; height: 5px; left: 50%; top: 110%; animation-duration: 18s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 4s; }
-        .p-4  { width: 3px; height: 3px; left: 70%; top: 110%; animation-duration: 25s; color: var(--primary-color); box-shadow: 0 0 8px var(--primary-color); animation-delay: 1s; }
-        .p-5  { width: 4px; height: 4px; left: 85%; top: 110%; animation-duration: 19s; color: var(--sus-red); box-shadow: 0 0 10px var(--sus-red); animation-delay: 3s; }
-        .p-6  { width: 2px; height: 2px; left: 95%; top: 110%; animation-duration: 30s; color: #fff; animation-delay: 5s; }
-        .p-7  { width: 6px; height: 6px; left: 20%; top: 110%; animation-duration: 16s; color: var(--fame-pink); box-shadow: 0 0 12px var(--fame-pink); animation-delay: 6s; }
-        .p-8  { width: 3px; height: 3px; left: 60%; top: 110%; animation-duration: 20s; color: var(--primary-color); box-shadow: 0 0 8px var(--primary-color); animation-delay: 0.5s; }
-
-        @keyframes float-particles {
-            0%   { transform: translateY(0); opacity: 0; }
-            10%  { opacity: 0.7; }
-            90%  { opacity: 0.7; }
-            100% { transform: translateY(-120vh); opacity: 0; } 
-        }
-
-        /* --- 🔵 LOGO IMAGE TÙY CHỈNH CHO FAME --- */
-        .race-logo {
-            display: block;
-            margin: 0 auto 5px auto; 
-            max-width: 170px; /* Chỉnh độ to của logo */
-            height: auto;
-            /* Hào quang màu hồng/tím phù hợp với logo FAME */
-            filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5));
-            animation: logo-fame-glow 3s infinite alternate;
-        }
-
-        @keyframes logo-fame-glow { 
-            0% { filter: drop-shadow(0 0 8px rgba(255, 20, 147, 0.4)); transform: scale(1); } 
-            100% { filter: drop-shadow(0 0 20px rgba(255, 20, 147, 0.8)); transform: scale(1.05); } 
-        }
-
-        /* --- TIÊU ĐỀ LIÊN MINH --- */
+        
+        /* --- TIÊU ĐỀ FASUMES MỚI --- */
         h1 {
-            font-size: 3em;
+            font-size: 3.5em;
             margin-top: 0;
-            margin-bottom: 10px;
-            text-transform: none;
+            margin-bottom: 30px;
             display: flex;
             justify-content: center;
-            align-items: baseline;
-            gap: 12px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            color: var(--fasumes-color);
+            /* Hiệu ứng phát sáng và nhịp thở đặc trưng */
+            text-shadow: 0 0 15px var(--fasumes-color), 0 0 30px rgba(255, 20, 147, 0.6);
+            animation: pulse-fasumes 2.5s infinite alternate;
         }
 
-        .sus-brand {
-            font-weight: 800;
-            font-size: 1.5em;
-            color: var(--sus-red);
-            text-shadow: 0 0 15px var(--sus-red), 0 0 30px rgba(255,0,60,0.6);
-            animation: pulse-red 2s infinite alternate;
-        }
-
-        .cross-mark {
-            font-size: 1em;
-            color: #6e7681;
-            font-weight: 500;
-            padding: 0 5px;
-        }
-
-        .fame-brand {
-            font-weight: 800;
-            font-size: 1.5em;
-            color: var(--fame-pink);
-            text-shadow: 0 0 15px var(--fame-pink), 0 0 30px rgba(255,20,147,0.6);
-            animation: pulse-pink 2s infinite alternate-reverse;
-            text-transform: uppercase;
-        }
-
-        .xp-event {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(0,242,255,0.5);
-            opacity: 0.9;
-            margin-left: 10px;
-        }
-
+        /* Biểu tượng cờ đua */
         .flag-icon {
             font-size: 0.8em;
             opacity: 0.9;
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
-        }
-
-        .subtitle {
-            color: #8b949e;
-            font-size: 1.1em;
-            margin-bottom: 40px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            opacity: 0.9;
         }
 
         /* --- BẢNG XẾP HẠNG --- */
@@ -167,14 +69,11 @@
             margin: 0 auto;
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             border-radius: 20px;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             overflow: hidden;
             animation: slideUp 0.8s ease-out;
-            position: relative; 
-            z-index: 10;
         }
 
         table { width: 100%; border-collapse: collapse; }
@@ -197,79 +96,60 @@
             font-weight: 600;
         }
 
-        tbody tr { transition: all 0.3s ease; }
+        /* Hiệu ứng di chuột vào dòng */
         tbody tr:hover {
             background-color: rgba(255, 255, 255, 0.05);
             transform: scale(1.01);
-            box-shadow: 0 0 15px rgba(0,0,0,0.3) inset;
+            transition: all 0.3s ease;
         }
 
-        .tag-sus { color: var(--sus-red); text-shadow: 0 0 8px rgba(255,0,60,0.5); }
-        .tag-fame { color: var(--fame-pink); text-shadow: 0 0 8px rgba(255,20,147,0.5); }
+        /* --- PHÂN CHIA CLAN TRONG TÊN VÕ SĨ --- */
+        .tag-sus { color: var(--sus-color); text-shadow: 0 0 8px rgba(255,0,60,0.5); }
+        .tag-fame { color: var(--fame-color); text-shadow: 0 0 8px rgba(255,215,0,0.5); }
 
-        .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        /* --- HIỆU ỨNG VỊ TRÍ TOP --- */
+        .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; }
         
-        .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--gold); transform: scale(1.1); }
-        .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
-        .row-top-1 td span.tag-sus, .row-top-1 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--fame-color); }
+        .row-top-1 td { color: var(--fame-color); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
 
-        .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
-        .row-top-2 td { color: var(--silver-cool); text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 5px rgba(0,242,255,0.1); }
-        .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
         
-        .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
-        .row-top-3 td { color: var(--rich-bronze); }
-        .row-top-3 td span.tag-sus, .row-top-3 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); box-shadow: 0 0 15px rgba(230,160,115,0.3); }
 
-        .gained-positive { color: var(--neon-green) !important; text-shadow: 0 0 10px rgba(57, 255, 20, 0.4) !important; font-weight: 700; }
-        .gained-zero { color: #52525b !important; font-weight: normal; }
-        .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa !important; letter-spacing: -0.5px; }
+        /* --- MÀU CỘT XP GAIED --- */
+        .gained-xp { 
+            color: var(--neon-green); 
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+            font-weight: 700;
+        }
         
-        .loading { font-size: 1.5em; color: #fff; margin-top: 50px; animation: blink 1s infinite; text-shadow: 0 0 10px #fff; }
-
+        /* Cột Total XP màu xám mờ */
+        .total-xp { font-family: 'Consolas', monospace; color: #a1a1aa; letter-spacing: -0.5px; }
+        
+        /* Hiệu ứng Animations */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        @keyframes pulse-red { 0% { text-shadow: 0 0 15px var(--sus-red); } 100% { text-shadow: 0 0 35px var(--sus-red), 0 0 10px #fff; transform: scale(1.02); } }
-        @keyframes pulse-pink { 0% { text-shadow: 0 0 15px var(--fame-pink); } 100% { text-shadow: 0 0 35px var(--fame-pink), 0 0 10px #fff; transform: scale(1.02); } }
+        @keyframes pulse-fasumes { 
+            0% { text-shadow: 0 0 15px var(--fasumes-color); } 
+            100% { text-shadow: 0 0 35px var(--fasumes-color), 0 0 10px #fff; transform: scale(1.02); } 
+        }
 
+        /* Media Query cho Mobile */
         @media (max-width: 768px) {
-            h1 { font-size: 1.8em; gap: 6px; }
-            .sus-brand, .fame-brand { font-size: 1.3em; }
+            h1 { font-size: 2.2em; gap: 8px; }
             td, th { padding: 12px 8px; font-size: 1em; }
-            .race-logo { max-width: 130px; } 
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-animation-container">
-        <div class="particle p-1"></div>
-        <div class="particle p-2"></div>
-        <div class="particle p-3"></div>
-        <div class="particle p-4"></div>
-        <div class="particle p-5"></div>
-        <div class="particle p-6"></div>
-        <div class="particle p-7"></div>
-        <div class="particle p-8"></div>
-    </div>
-
-    <img src="fame-logo.png" alt="FAME Logo" class="race-logo">
-
     <h1>
         <span class="flag-icon">🏁</span> 
-        <span class="sus-brand">SuS</span> 
-        <span class="cross-mark">x</span>
-        <span class="fame-brand">FAME</span>
-        <span class="xp-event">XP RACE</span> 
+        <span>FASUMES</span> 
         <span class="flag-icon">🏁</span>
     </h1>
-    <div class="subtitle">Joint Clan Leaderboard • Cross-Guild Event</div>
 
-    <div id="loading" class="loading">
-        Connecting to Cross-Guild Server... 📡
-    </div>
-
-    <div class="container" id="rankingTable" style="display:none;">
+    <div class="container" id="rankingTable">
         <table>
             <thead>
                 <tr>
@@ -280,73 +160,39 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
+                <tr class="row-top-1">
+                    <td style="text-align:center;"><span class="rank-badge top-1">1</span></td>
+                    <td style="text-align:left; padding-left: 20px;"><span class="tag-fame">FAME</span> Novsonik</td>
+                    <td class="gained-xp">+3,005,236,029</td>
+                    <td class="total-xp">15,487,213,991</td>
+                </tr>
+                <tr class="row-top-2">
+                    <td style="text-align:center;"><span class="rank-badge top-2">2</span></td>
+                    <td style="text-align:left; padding-left: 20px;"><span class="tag-sus">SuS</span> Dominate</td>
+                    <td class="gained-xp">+1,597,313,300</td>
+                    <td class="total-xp">9,122,884,501</td>
+                </tr>
+                <tr class="row-top-3">
+                    <td style="text-align:center;"><span class="rank-badge top-3">3</span></td>
+                    <td style="text-align:left; padding-left: 20px;"><span class="tag-fame">FAME</span> Nz Jr</td>
+                    <td class="gained-xp">+1,161,163,513</td>
+                    <td class="total-xp">8,871,521,003</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:left; padding-left: 20px;"><span class="tag-sus">SuS</span> QuangTong</td>
+                    <td class="gained-xp">+1,055,176,395</td>
+                    <td class="total-xp">7,951,421,884</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;">5</td>
+                    <td style="text-align:left; padding-left: 20px;"><span class="tag-fame">FAME</span> CriT</td>
+                    <td class="gained-xp">+588,845,211</td>
+                    <td class="total-xp">6,201,313,901</td>
+                </tr>
                 </tbody>
         </table>
     </div>
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx31PZ8HnoOJUjZoX_aVuVvOqVbpi4B1lfv6O0wfoDYCRQzCj3VeR27FXO4agPxp1Lwow/exec";
-
-        async function main() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                
-                data.sort((a, b) => Number(b.gained_xp) - Number(a.gained_xp));
-
-                const tbody = document.getElementById("tableBody");
-                let html = "";
-
-                data.forEach((user, index) => {
-                    const rank = index + 1;
-                    let rankBadge = rank;
-                    let rowClass = "";
-                    
-                    if (rank === 1) { rankBadge = `<span class="rank-badge top-1">1</span>`; rowClass = "row-top-1"; } 
-                    else if (rank === 2) { rankBadge = `<span class="rank-badge top-2">2</span>`; rowClass = "row-top-2"; } 
-                    else if (rank === 3) { rankBadge = `<span class="rank-badge top-3">3</span>`; rowClass = "row-top-3"; }
-
-                    let displayName = user.name;
-                    if (displayName.includes("SuS ")) {
-                        displayName = displayName.replace("SuS ", "<span class='tag-sus'>SuS </span>");
-                    } else if (displayName.includes("SuS")) {
-                        displayName = displayName.replace("SuS", "<span class='tag-sus'>SuS</span>");
-                    }
-                    
-                    let upperName = displayName.toUpperCase();
-                    if (upperName.includes("FAME ")) {
-                        displayName = displayName.replace(/FAME /i, "<span class='tag-fame'>$&</span>");
-                    } else if (upperName.includes("FAME")) {
-                        displayName = displayName.replace(/FAME/i, "<span class='tag-fame'>$&</span>");
-                    }
-
-                    const gainedVal = Number(user.gained_xp);
-                    const currentVal = Number(user.current_xp);
-                    const gainedStr = gainedVal.toLocaleString();
-                    const currentStr = currentVal.toLocaleString();
-                    const gainedClass = gainedVal > 0 ? "gained-positive" : "gained-zero";
-                    const gainedSign = gainedVal > 0 ? "+" : "";
-
-                    html += `
-                        <tr class="${rowClass}">
-                            <td style="text-align:center;">${rankBadge}</td>
-                            <td style="text-align:left; padding-left: 20px;">${displayName}</td>
-                            <td class="${gainedClass}">${gainedSign}${gainedStr}</td>
-                            <td class="total-xp">${currentStr}</td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = html;
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("rankingTable").style.display = "block";
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById("loading").innerHTML = "❌ Server Disconnected. Try F5.";
-            }
-        }
-        main();
-    </script>
 </body>
 </html>
