@@ -9,24 +9,26 @@
     <style>
         /* --- CẤU HÌNH MÀU SẮC LIÊN GUILD --- */
         :root {
-            --primary-color: #00f2ff;
+            --primary-color: #00f2ff; /* Xanh Neon */
             --sus-red: #ff003c;       /* ĐỎ SuS */
             --sus-dark: #3a000e;
-            --fame-gold: #ffb700;     /* VÀNG FAME */
-            --fame-dark: #4a3500;
+            --fame-pink: #ff1493;     /* MÀU HỒNG FAME (ĐÃ ĐỔI) */
+            --fame-dark: #4a002b;
             --bg-dark: #09090b;
             --glass-bg: rgba(22, 27, 34, 0.75);
             --border-color: rgba(255, 255, 255, 0.1);
             --gold: #ffd700;
+            --silver-cool: #e0f2ff;   /* MÀU BẠC COOL MỚI CHO TOP 2 */
+            --rich-bronze: #e6a073;    /* MÀU ĐỒNG ẤM CHO TOP 3 */
             --neon-green: #39ff14;
         }
 
         body {
             background-color: var(--bg-dark);
-            /* Nền pha trộn: Đỏ SuS bên trái, Vàng FAME bên phải */
+            /* Nền pha trộn: Đỏ SuS bên trái, Hồng FAME bên phải */
             background-image: 
                 radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 85% 70%, rgba(255, 183, 0, 0.15) 0%, transparent 45%);
+                radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.15) 0%, transparent 45%);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
@@ -68,19 +70,19 @@
         .fame-brand {
             font-weight: 800;
             font-size: 1.5em;
-            color: var(--fame-gold);
-            text-shadow: 0 0 15px var(--fame-gold), 0 0 30px rgba(255,183,0,0.6);
-            animation: pulse-gold 2s infinite alternate-reverse;
+            color: var(--fame-pink);
+            text-shadow: 0 0 15px var(--fame-pink), 0 0 30px rgba(255,20,147,0.6);
+            animation: pulse-pink 2s infinite alternate-reverse;
             text-transform: uppercase;
         }
 
         .xp-event {
-            color: #ffffff;
+            color: var(--primary-color);
             font-weight: 700;
             font-size: 0.7em;
             text-transform: uppercase;
             letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 0 10px rgba(0,242,255,0.5);
             opacity: 0.9;
             margin-left: 10px;
         }
@@ -143,16 +145,32 @@
 
         /* Tag Guild trong Bảng */
         .tag-sus { color: var(--sus-red); text-shadow: 0 0 8px rgba(255,0,60,0.5); }
-        .tag-fame { color: var(--fame-gold); text-shadow: 0 0 8px rgba(255,183,0,0.5); }
+        .tag-fame { color: var(--fame-pink); text-shadow: 0 0 8px rgba(255,20,147,0.5); }
 
         /* Rank Badges & Colors */
         .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        
+        /* Top 1 - Gold Row */
         .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--gold); transform: scale(1.1); }
         .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+        /* Nhuộm tất cả span trong Top 1 thành Vàng */
+        .row-top-1 td span.tag-sus, .row-top-1 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+
+        /* Top 2 - Silver Row */
         .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
-        .row-top-2 td { color: #e0e0e0; }
+        /* LÀM NỔI BẬT TÊN TOP 2 */
+        .row-top-2 td { 
+            color: var(--silver-cool); 
+            text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 5px rgba(0,242,255,0.1); 
+        }
+        /* Nhuộm tất cả span trong Top 2 thành Bạc */
+        .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        
+        /* Top 3 - Bronze Row */
         .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
-        .row-top-3 td { color: #ffab76; }
+        .row-top-3 td { color: var(--rich-bronze); }
+        /* Nhuộm tất cả span trong Top 3 thành Đồng */
+        .row-top-3 td span.tag-sus, .row-top-3 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
 
         /* XP Colors */
         .gained-positive { 
@@ -169,7 +187,7 @@
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0.5; } }
         @keyframes pulse-red { 0% { text-shadow: 0 0 15px var(--sus-red); } 100% { text-shadow: 0 0 35px var(--sus-red), 0 0 10px #fff; transform: scale(1.02); } }
-        @keyframes pulse-gold { 0% { text-shadow: 0 0 15px var(--fame-gold); } 100% { text-shadow: 0 0 35px var(--fame-gold), 0 0 10px #fff; transform: scale(1.02); } }
+        @keyframes pulse-pink { 0% { text-shadow: 0 0 15px var(--fame-pink); } 100% { text-shadow: 0 0 35px var(--fame-pink), 0 0 10px #fff; transform: scale(1.02); } }
 
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; gap: 6px; }
@@ -245,7 +263,6 @@
                     // Nếu tên chứa "FAME " hoặc "FAME" (Không phân biệt hoa thường)
                     let upperName = displayName.toUpperCase();
                     if (upperName.includes("FAME ")) {
-                        // Dùng Regex để thay thế giữ nguyên chữ gốc của họ nhưng đổi màu
                         displayName = displayName.replace(/FAME /i, "<span class='tag-fame'>$&</span>");
                     } else if (upperName.includes("FAME")) {
                         displayName = displayName.replace(/FAME/i, "<span class='tag-fame'>$&</span>");
