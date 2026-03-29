@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuS x FAME - XP Race</title>
+    <title>FASUMES - XP Race</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -108,25 +108,8 @@
             flex-wrap: wrap;
         }
 
-        /* SuS Brand */
-        .sus-brand {
-            font-weight: 800;
-            font-size: 1.5em;
-            color: var(--sus-red);
-            text-shadow: 0 0 15px var(--sus-red), 0 0 30px rgba(255,0,60,0.6);
-            animation: pulse-red 2s infinite alternate;
-        }
-
-        /* Dấu X ở giữa */
-        .cross-mark {
-            font-size: 1em;
-            color: #6e7681;
-            font-weight: 500;
-            padding: 0 5px;
-        }
-
-        /* FAME Brand */
-        .fame-brand {
+        /* FASUMES Brand */
+        .fasumes-brand {
             font-weight: 800;
             font-size: 1.5em;
             color: var(--fame-pink);
@@ -240,13 +223,12 @@
         /* Animations */
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0.5; } }
-        @keyframes pulse-red { 0% { text-shadow: 0 0 15px var(--sus-red); } 100% { text-shadow: 0 0 35px var(--sus-red), 0 0 10px #fff; transform: scale(1.02); } }
         @keyframes pulse-pink { 0% { text-shadow: 0 0 15px var(--fame-pink); } 100% { text-shadow: 0 0 35px var(--fame-pink), 0 0 10px #fff; transform: scale(1.02); } }
         @keyframes logo-glow { 0% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); } 100% { filter: drop-shadow(0 0 18px rgba(255,255,255,0.6)); } }
 
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; gap: 6px; }
-            .sus-brand, .fame-brand { font-size: 1.3em; }
+            .fasumes-brand { font-size: 1.3em; }
             td, th { padding: 12px 8px; font-size: 1em; }
             .race-logo { max-width: 120px; } /* Thu nhỏ logo trên mobile */
         }
@@ -265,12 +247,10 @@
         <div class="particle p-8"></div>
     </div>
 
-    <img src="https://i.imgur.com/vH9J9U6.png" alt="SuS x FAME Logo" class="race-logo">
+    <img src="https://i.imgur.com/vH9J9U6.png" alt="FASUMES Logo" class="race-logo">
     <h1>
         <span class="flag-icon">🏁</span> 
-        <span class="sus-brand">SuS</span> 
-        <span class="cross-mark">x</span>
-        <span class="fame-brand">FAME</span>
+        <span class="fasumes-brand">FASUMES</span> 
         <span class="xp-event">XP RACE</span> 
         <span class="flag-icon">🏁</span>
     </h1>
