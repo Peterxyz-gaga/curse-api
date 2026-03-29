@@ -7,19 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CẤU HÌNH MÀU SẮC LIÊN GUILD --- */
+        /* --- CẤU HÌNH MÀU SẮC --- */
         :root {
-            --primary-color: #00f2ff; /* Xanh Neon */
-            --sus-red: #ff003c;       /* ĐỎ SuS */
-            --sus-dark: #3a000e;
-            --fame-pink: #ff1493;     /* HỒNG FAME */
-            --fame-dark: #4a002b;
-            --bg-dark: #09090b;       /* Nền đen sâu */
-            --glass-bg: rgba(22, 27, 34, 0.75); /* Màu kính mờ */
+            --primary-color: #00f2ff; 
+            --sus-red: #ff003c;       
+            --fame-pink: #ff1493;     
+            --bg-dark: #09090b;       
+            --glass-bg: rgba(22, 27, 34, 0.75); 
             --border-color: rgba(255, 255, 255, 0.1);
             --gold: #ffd700;
-            --silver-cool: #e0f2ff;   /* BẠC COOL TOP 2 */
-            --rich-bronze: #e6a073;    /* ĐỒNG ẤM TOP 3 */
+            --silver-cool: #e0f2ff;   
+            --rich-bronze: #e6a073;    
             --neon-green: #39ff14;
         }
 
@@ -31,24 +29,22 @@
             padding: 40px 20px;
             text-align: center;
             min-height: 100vh;
-            position: relative; /* Để chứa các hạt bụi nền */
-            overflow-x: hidden; /* Tránh hiện thanh cuộn ngang do bụi bay */
+            position: relative; 
+            overflow-x: hidden; 
         }
 
-        /* --- 🔴 HIỆU ỨNG NỀN ĐỘNG (FLOATING PARTICLES) --- */
+        /* --- NỀN ĐỘNG (FLOATING PARTICLES) --- */
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; /* Nằm dưới cùng */
+            z-index: -2; 
             background-color: var(--bg-dark);
-            /* Radial Gradient làm nền ảo giác màu Đỏ/Hồng */
             background-image: 
                 radial-gradient(circle at 15% 30%, rgba(255, 0, 60, 0.12) 0%, transparent 40%),
                 radial-gradient(circle at 85% 70%, rgba(255, 20, 147, 0.12) 0%, transparent 40%);
         }
 
-        /* Container chứa các hạt bụi động */
         .bg-animation-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -56,7 +52,6 @@
             pointer-events: none; 
         }
 
-        /* Tạo 1 hạt bụi (class dùng chung) */
         .particle {
             position: absolute;
             background: #fff;
@@ -79,23 +74,22 @@
             0%   { transform: translateY(0); opacity: 0; }
             10%  { opacity: 0.7; }
             90%  { opacity: 0.7; }
-            100% { transform: translateY(-120vh); opacity: 0; }
+            100% { transform: translateY(-120vh); opacity: 0; } 
         }
 
-        /* --- TIÊU ĐỀ LIÊN MINH (CẬP NHẬT MỚI) --- */
+        /* --- TIÊU ĐỀ --- */
         .header-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        /* FASUMES Brand */
         .fasumes-brand {
             font-weight: 800;
-            font-size: 4.5em; /* Chữ bự choán ngợp */
+            font-size: 4.5em; 
             color: var(--fame-pink);
             text-shadow: 0 0 15px var(--fame-pink), 0 0 30px rgba(255,20,147,0.6);
             animation: pulse-pink 2s infinite alternate-reverse;
@@ -104,7 +98,6 @@
             margin-bottom: 15px;
         }
 
-        /* Hàng chứa XP Race và Kiếm */
         .sub-header {
             display: flex;
             align-items: center;
@@ -125,15 +118,6 @@
             font-size: 2.5em;
             opacity: 0.9;
             filter: drop-shadow(0 0 10px rgba(0,242,255,0.5));
-        }
-
-        .subtitle {
-            color: #8b949e;
-            font-size: 1.1em;
-            margin-bottom: 40px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            opacity: 0.9;
         }
 
         /* --- BẢNG XẾP HẠNG --- */
@@ -179,24 +163,31 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.3) inset;
         }
 
-        /* Tag Guild trong Bảng */
-        .tag-sus { color: var(--sus-red); text-shadow: 0 0 8px rgba(255,0,60,0.5); }
-        .tag-fame { color: var(--fame-pink); text-shadow: 0 0 8px rgba(255,20,147,0.5); }
+        /* --- STYLE CHO TAG GUILD --- */
+        /* Mặc định cho ngoài top 3: Màu trắng, in đậm */
+        .tag-guild { 
+            color: #ffffff; 
+            font-weight: 800; 
+            text-shadow: 0 0 5px rgba(255,255,255,0.3); 
+        }
 
-        /* Rank Badges & Colors */
+        /* Rank Badges */
         .rank-badge { display: inline-block; width: 32px; height: 32px; line-height: 32px; border-radius: 50%; text-align: center; font-weight: bold; color: #000; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         
+        /* Top 1 */
         .top-1 { background: linear-gradient(45deg, #ffd700, #fffacd); box-shadow: 0 0 20px var(--gold); transform: scale(1.1); }
         .row-top-1 td { color: var(--gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
-        .row-top-1 td span.tag-sus, .row-top-1 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .row-top-1 td span.tag-guild { color: inherit !important; text-shadow: inherit !important; }
 
+        /* Top 2 */
         .top-2 { background: linear-gradient(45deg, #c0c0c0, #ffffff); }
         .row-top-2 td { color: var(--silver-cool); text-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 5px rgba(0,242,255,0.1); }
-        .row-top-2 td span.tag-sus, .row-top-2 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .row-top-2 td span.tag-guild { color: inherit !important; text-shadow: inherit !important; }
         
+        /* Top 3 */
         .top-3 { background: linear-gradient(45deg, #cd7f32, #ffcc99); }
         .row-top-3 td { color: var(--rich-bronze); }
-        .row-top-3 td span.tag-sus, .row-top-3 td span.tag-fame { color: inherit !important; text-shadow: inherit !important; }
+        .row-top-3 td span.tag-guild { color: inherit !important; text-shadow: inherit !important; }
 
         /* XP Colors */
         .gained-positive { 
@@ -243,8 +234,6 @@
             <span class="sword-icon">⚔️</span>
         </div>
     </div>
-    
-    <div class="subtitle">Joint Clan Leaderboard • Cross-Guild Event</div>
 
     <div id="loading" class="loading">
         Connecting to Cross-Guild Server... 📡
@@ -255,7 +244,7 @@
             <thead>
                 <tr>
                     <th width="10%">#</th>
-                    <th width="40%" style="text-align:left; padding-left: 20px;">Fighter</th>
+                    <th width="40%" style="text-align:left; padding-left: 20px;">Player</th>
                     <th width="25%">Gained XP</th>
                     <th width="25%">Total XP</th>
                 </tr>
@@ -287,18 +276,19 @@
                     else if (rank === 2) { rankBadge = `<span class="rank-badge top-2">2</span>`; rowClass = "row-top-2"; } 
                     else if (rank === 3) { rankBadge = `<span class="rank-badge top-3">3</span>`; rowClass = "row-top-3"; }
 
+                    // XỬ LÝ NHẬN DIỆN GUILD TAG TRONG TÊN VÀ GẮN CLASS .tag-guild
                     let displayName = user.name;
                     if (displayName.includes("SuS ")) {
-                        displayName = displayName.replace("SuS ", "<span class='tag-sus'>SuS </span>");
+                        displayName = displayName.replace("SuS ", "<span class='tag-guild'>SuS </span>");
                     } else if (displayName.includes("SuS")) {
-                        displayName = displayName.replace("SuS", "<span class='tag-sus'>SuS</span>");
+                        displayName = displayName.replace("SuS", "<span class='tag-guild'>SuS</span>");
                     }
                     
                     let upperName = displayName.toUpperCase();
                     if (upperName.includes("FAME ")) {
-                        displayName = displayName.replace(/FAME /i, "<span class='tag-fame'>$&</span>");
+                        displayName = displayName.replace(/FAME /i, "<span class='tag-guild'>$&</span>");
                     } else if (upperName.includes("FAME")) {
-                        displayName = displayName.replace(/FAME/i, "<span class='tag-fame'>$&</span>");
+                        displayName = displayName.replace(/FAME/i, "<span class='tag-guild'>$&</span>");
                     }
 
                     const gainedVal = Number(user.gained_xp);
